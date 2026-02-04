@@ -1,5 +1,6 @@
 import express from "express";
 import authRoutes from "./modules/auth/auth.routes.js";
+import farmerRoutes from "./modules/farmer/farmer.routes.js";
 
 const app = express();
 
@@ -13,5 +14,6 @@ app.get("/health", (_req, res) => {
 
 // 🔐 Auth routes
 app.use("/auth", authRoutes);
+app.use("/farmers", farmerRoutes);
 
 export default app;

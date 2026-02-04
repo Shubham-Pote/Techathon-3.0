@@ -11,6 +11,9 @@ model Farmer {
   id        String   @id @default(uuid())
   mobile    String   @unique
   createdAt DateTime @default(now())
+
+  state     String?
+  district  String?
 }
 
 model Otp {
