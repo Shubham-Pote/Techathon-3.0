@@ -16,11 +16,13 @@ export async function getMyProfile(req: AuthRequest, res: Response) {
 // PUT /farmers/me
 export async function updateMyProfile(req: AuthRequest, res: Response) {
   const farmerId = req.user!.farmerId;
-  const { state, district } = req.body;
+  const { state, landSizeAcres, crops } = req.body;
 
   const farmer = await prisma.farmer.update({
     where: { id: farmerId },
-    data: { state, district },
+    data: { state ,
+      landSizeAcres,
+      crops},
   });
 
   res.json({

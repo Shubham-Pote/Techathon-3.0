@@ -7,13 +7,31 @@ datasource db {
   provider = "postgresql"
 }
 
+enum SchemeCategory {
+  SUBSIDY
+  INSURANCE
+  WELFARE
+}
+
+enum CropType {
+  COTTON
+  PADDY
+  WHEAT
+  SUGARCANE
+  SOYBEAN
+  MAIZE
+  OTHER
+}
+
 model Farmer {
   id        String   @id @default(uuid())
   mobile    String   @unique
   createdAt DateTime @default(now())
 
   state     String?
-  district  String?
+
+  landSizeAcres Float?        
+  crops         CropType[] 
 }
 
 model Otp {
@@ -25,3 +43,36 @@ model Otp {
 
   @@index([mobile])
 }
+
+model Scheme {
+  id           String @id @default(uuid())
+  schemeId     String @unique   // GJ_AGRI_DRONE_001
+  schemeName   String
+
+  state        String?          // null = central
+  category     SchemeCategory
+
+  minLandAcres Float?           // eligibility fast check
+  supportedCrops CropType[]     // empty = applicable to all
+
+  isActive     Boolean @default(true)
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  content      SchemeContent?
+}
+
+model SchemeContent {
+  id        String @id @default(uuid())
+  schemeId  String @unique
+
+  details             Json
+  benefits            Json
+  eligibility          Json
+  applicationProcess  Json
+  documentsRequired   Json
+
+  scheme Scheme @relation(fields: [schemeId], references: [id], onDelete: Cascade)
+}
+
