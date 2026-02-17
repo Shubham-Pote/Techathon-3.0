@@ -140,29 +140,33 @@ export default function SchemePage({ search = "" }) {
     cropFilter.length +
     (eligibilityFilter !== "all" ? 1 : 0)
 
+  /* ================= STATS ================= */
+  const uniqueStates = states.length
+  const totalSchemes = schemes.length
+
   /* ================= UI ================= */
   return (
     <div className="flex bg-slate-50 min-h-screen">
 
       {/* ================= SIDEBAR ================= */}
-      <aside className="hidden md:block w-72 shrink-0 sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto bg-white border-r border-slate-200 p-6 rounded-2xl shadow-sm">
+      <aside className="hidden md:block w-72 shrink-0 sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto bg-white border-r border-slate-200 px-5 py-6">
 
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="font-semibold text-lg text-slate-800">
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="font-semibold text-base text-slate-800">
             Filters
           </h2>
 
           {activeFilterCount > 0 && (
-            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+            <span className="text-[11px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">
               {activeFilterCount} active
             </span>
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-5">
 
           {/* STATE */}
-          <FilterSection title="State">
+          <FilterSection title="State" count={stateFilter.length}>
             {states.map((s) => (
               <CheckboxItem
                 key={s}
@@ -180,7 +184,7 @@ export default function SchemePage({ search = "" }) {
           </FilterSection>
 
           {/* CATEGORY */}
-          <FilterSection title="Support Type">
+          <FilterSection title="Support Type" count={categoryFilter.length}>
             {categories.map((c) => (
               <CheckboxItem
                 key={c}
@@ -198,7 +202,7 @@ export default function SchemePage({ search = "" }) {
           </FilterSection>
 
           {/* CROPS */}
-          <FilterSection title="Crop">
+          <FilterSection title="Crop" count={cropFilter.length}>
             {crops.map((c) => (
               <CheckboxItem
                 key={c}
@@ -240,45 +244,69 @@ export default function SchemePage({ search = "" }) {
           )}
 
           {/* CLEAR */}
-          <button
-            onClick={() => {
-              setStateFilter([])
-              setCategoryFilter([])
-              setCropFilter([])
-              setEligibilityFilter("all")
-            }}
-            className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium transition"
-          >
-            Clear Filters
-          </button>
+          {activeFilterCount > 0 && (
+            <button
+              onClick={() => {
+                setStateFilter([])
+                setCategoryFilter([])
+                setCropFilter([])
+                setEligibilityFilter("all")
+              }}
+              className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium transition"
+            >
+              Clear All Filters
+            </button>
+          )}
 
         </div>
       </aside>
 
       {/* ================= CONTENT ================= */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 px-6 py-6 lg:px-8">
 
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold">
-            Available Schemes
-          </h1>
+        {/* Stats bar */}
+        {!loading && (
+          <div className="flex flex-wrap gap-4 mb-5 text-sm text-slate-500">
+            <span><span className="font-semibold text-slate-800">{totalSchemes}</span> total</span>
+            <span className="text-slate-300">|</span>
+            <span><span className="font-semibold text-slate-800">{uniqueStates}</span> states</span>
+            <span className="text-slate-300">|</span>
+            <span><span className="font-semibold text-emerald-700">{filtered.length}</span> matching</span>
+          </div>
+        )}
+
+        {/* Title + Sort */}
+        <div className="flex justify-between items-center mb-5">
+          <div>
+            <h1 className="text-xl font-bold text-slate-800">
+              Available Schemes
+            </h1>
+            {!loading && (
+              <p className="text-sm text-slate-500 mt-0.5">
+                Showing {paginatedSchemes.length} of {filtered.length} schemes
+              </p>
+            )}
+          </div>
 
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value)}
-            className="p-2 border rounded-xl"
+            className="px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 outline-none"
           >
-            <option value="">Default</option>
-            <option value="asc">A → Z</option>
-            <option value="desc">Z → A</option>
+            <option value="">Sort: Default</option>
+            <option value="asc">Sort: A → Z</option>
+            <option value="desc">Sort: Z → A</option>
           </select>
         </div>
 
         {loading ? (
-          <p>Loading schemes...</p>
+          <div className="flex flex-col items-center justify-center py-20 gap-3">
+            <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
+            <p className="text-slate-500 text-sm">Loading schemes...</p>
+          </div>
         ) : (
           <>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {paginatedSchemes.map((s) => (
                 <SchemeCard
                   key={s?.scheme_id}
@@ -287,9 +315,10 @@ export default function SchemePage({ search = "" }) {
               ))}
 
               {filtered.length === 0 && (
-                <p className="text-center text-slate-500 mt-10">
-                  No schemes found
-                </p>
+                <div className="text-center py-16">
+                  <p className="text-slate-600 font-medium">No schemes found</p>
+                  <p className="text-sm text-slate-400 mt-1">Try adjusting your filters or search</p>
+                </div>
               )}
             </div>
 
@@ -309,69 +338,112 @@ export default function SchemePage({ search = "" }) {
 
 /* ================= REUSABLE COMPONENTS ================= */
 
-function FilterSection({ title, children }) {
+function FilterSection({ title, count, children }) {
+  const [open, setOpen] = useState(false)
+
   return (
-    <div>
-      <h3 className="text-sm font-semibold text-slate-600 mb-3">
-        {title}
-      </h3>
-      <div className="space-y-2 max-h-44 overflow-y-auto">
-        {children}
-      </div>
+    <div className="border-b border-slate-100 pb-2">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center justify-between w-full py-2 text-left"
+      >
+        <div className="flex items-center gap-2">
+          <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+            {title}
+          </h3>
+          {count > 0 && (
+            <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-bold">
+              {count}
+            </span>
+          )}
+        </div>
+        <span className={`text-slate-400 text-xs transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+          ▼
+        </span>
+      </button>
+      {open && (
+        <div className="space-y-0.5 pb-1">
+          {children}
+        </div>
+      )}
     </div>
   )
 }
 
 function CheckboxItem({ label, checked, onChange }) {
   return (
-    <label className="flex items-center gap-2 text-sm cursor-pointer">
+    <label className="flex items-center gap-2.5 text-sm cursor-pointer py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors">
       <input
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="accent-green-600"
+        className="w-4 h-4 accent-emerald-600 rounded"
       />
-      {label}
+      <span className={checked ? "text-slate-800 font-medium" : "text-slate-600"}>{label}</span>
     </label>
   )
 }
 
 function RadioItem({ label, value, selected, onChange }) {
   return (
-    <label className="flex items-center gap-2 text-sm cursor-pointer">
+    <label className="flex items-center gap-2.5 text-sm cursor-pointer py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors">
       <input
         type="radio"
         checked={selected === value}
         onChange={() => onChange(value)}
-        className="accent-green-600"
+        className="w-4 h-4 accent-emerald-600"
       />
-      {label}
+      <span className={selected === value ? "text-slate-800 font-medium" : "text-slate-600"}>{label}</span>
     </label>
   )
 }
 
 function Pagination({ currentPage, totalPages, setCurrentPage }) {
   return (
-    <div className="flex justify-center gap-4 mt-8">
+    <div className="flex items-center justify-center gap-2 mt-8">
 
       <button
         disabled={currentPage === 1}
         onClick={() => setCurrentPage((p) => p - 1)}
-        className="px-4 py-2 border rounded-xl disabled:opacity-50"
+        className="px-4 py-2 text-sm border border-slate-200 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition font-medium text-slate-700"
       >
-        Previous
+        ← Previous
       </button>
 
-      <span className="text-sm">
-        Page {currentPage} of {totalPages}
-      </span>
+      <div className="flex items-center gap-1 mx-2">
+        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+          let page
+          if (totalPages <= 5) {
+            page = i + 1
+          } else if (currentPage <= 3) {
+            page = i + 1
+          } else if (currentPage >= totalPages - 2) {
+            page = totalPages - 4 + i
+          } else {
+            page = currentPage - 2 + i
+          }
+          return (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`w-9 h-9 text-sm rounded-lg font-medium transition ${
+                currentPage === page
+                  ? "bg-emerald-600 text-white shadow-sm"
+                  : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              {page}
+            </button>
+          )
+        })}
+      </div>
 
       <button
         disabled={currentPage === totalPages}
         onClick={() => setCurrentPage((p) => p + 1)}
-        className="px-4 py-2 border rounded-xl disabled:opacity-50"
+        className="px-4 py-2 text-sm border border-slate-200 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition font-medium text-slate-700"
       >
-        Next
+        Next →
       </button>
 
     </div>

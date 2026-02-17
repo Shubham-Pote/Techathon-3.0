@@ -10,23 +10,27 @@ const cropsEnum = [
   "OTHER",
 ]
 
+const indianStates = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+  "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+  "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+  "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura",
+  "Uttar Pradesh", "Uttarakhand", "West Bengal"
+]
+
 export default function DetailsStep({ onFinish }) {
   const [form, setForm] = useState({
-    name: "",
     state: "",
-    land_acres: "",
+    landSizeAcres: "",
     crops: [],
-    land_owner: false,
-    has_aadhaar: false,
-    has_bank_account: false,
   })
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-
+    const { name, value } = e.target
     setForm({
       ...form,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     })
   }
 
@@ -41,58 +45,74 @@ export default function DetailsStep({ onFinish }) {
 
   const handleSubmit = () => {
     onFinish({
-      ...form,
-      land_acres: Number(form.land_acres),
+      state: form.state || null,
+      landSizeAcres: form.landSizeAcres ? Number(form.landSizeAcres) : null,
+      crops: form.crops,
     })
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-h-[480px] overflow-y-auto pr-2 space-y-4">
 
-      <p className="text-gray-700 text-sm">
-        Complete your farming details to check scheme eligibility
-      </p>
-
-      {/* Name */}
-      <input
-        name="name"
-        placeholder="Full Name"
-        onChange={handleChange}
-        className="w-full border border-gray-200 rounded-xl px-4 py-3"
-      />
+      <div>
+        <p className="text-gray-700 text-sm font-medium mb-4">
+          Complete your farm details to find eligible schemes
+        </p>
+      </div>
 
       {/* State */}
-      <input
-        name="state"
-        placeholder="State"
-        onChange={handleChange}
-        className="w-full border border-gray-200 rounded-xl px-4 py-3"
-      />
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          State <span className="text-red-500">*</span>
+        </label>
+        <select
+          name="state"
+          value={form.state}
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
+        >
+          <option value="">Select your state</option>
+          {indianStates.map((state) => (
+            <option key={state} value={state}>
+              {state}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {/* Land */}
-      <input
-        type="number"
-        name="land_acres"
-        placeholder="Land Size (acres)"
-        onChange={handleChange}
-        className="w-full border border-gray-200 rounded-xl px-4 py-3"
-      />
+      {/* Land Size */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Land Size (in acres)
+        </label>
+        <input
+          type="number"
+          name="landSizeAcres"
+          value={form.landSizeAcres}
+          placeholder="e.g., 5.5"
+          step="0.1"
+          min="0"
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
+        />
+      </div>
 
       {/* Crops multi-select */}
       <div>
-        <p className="text-sm mb-2">Crops Grown</p>
-
-        <div className="flex flex-wrap gap-2">
+        <label className="block text-sm font-semibold text-gray-700 mb-2">
+          Crops You Grow
+        </label>
+        <div className="grid grid-cols-2 gap-2">
           {cropsEnum.map((crop) => (
             <button
               key={crop}
               type="button"
               onClick={() => toggleCrop(crop)}
-              className={`px-3 py-1 rounded-full border text-sm transition
+              className={`px-3 py-2 rounded-md border text-xs font-medium transition-all
                 ${
                   form.crops.includes(crop)
-                    ? "bg-emerald-600 text-white"
-                    : "bg-white"
+                    ? "bg-emerald-600 border-emerald-600 text-white"
+                    : "bg-white border-gray-300 text-gray-700 hover:border-emerald-400"
                 }`}
             >
               {crop}
@@ -101,41 +121,10 @@ export default function DetailsStep({ onFinish }) {
         </div>
       </div>
 
-      {/* Checkboxes */}
-      <div className="space-y-2 text-sm">
-
-        <label className="flex gap-2">
-          <input
-            type="checkbox"
-            name="land_owner"
-            onChange={handleChange}
-          />
-          I am the land owner
-        </label>
-
-        <label className="flex gap-2">
-          <input
-            type="checkbox"
-            name="has_aadhaar"
-            onChange={handleChange}
-          />
-          I have Aadhaar card
-        </label>
-
-        <label className="flex gap-2">
-          <input
-            type="checkbox"
-            name="has_bank_account"
-            onChange={handleChange}
-          />
-          I have bank account
-        </label>
-      </div>
-
       {/* Submit */}
       <button
         onClick={handleSubmit}
-        className="w-full bg-gradient-to-r from-emerald-700 to-green-700 text-white py-4 rounded-2xl font-semibold"
+        className="w-full bg-gradient-to-r from-emerald-700 to-green-700 text-white py-4 rounded-xl font-bold text-base hover:from-emerald-800 hover:to-green-800 shadow-lg hover:shadow-xl transition-all"
       >
         Save & Continue
       </button>

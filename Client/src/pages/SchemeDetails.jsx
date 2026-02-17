@@ -1,18 +1,11 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useRef, useState, useEffect } from "react";
 import Navbar from "../Components/Navbar";
 import { getSchemeById } from "../services/schemeService";
 
-import {
-  SectionWrapper,
-  SidebarItem,
-  ChecklistItem,
-  TimelineStep,
-  DocumentCard
-} from "../Components/SchemeSectionComponents";
-
 export default function SchemeDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [scheme, setScheme] = useState(null);
   const [active, setActive] = useState("details");
@@ -23,263 +16,334 @@ export default function SchemeDetails() {
   const processRef = useRef(null);
   const docsRef = useRef(null);
 
-  const sections = [
-    { id: "details", ref: detailsRef },
-    { id: "benefits", ref: benefitsRef },
-    { id: "eligibility", ref: eligibilityRef },
-    { id: "process", ref: processRef },
-    { id: "docs", ref: docsRef }
+  const sidebarSections = [
+    { id: "details", label: "Details", ref: detailsRef },
+    { id: "benefits", label: "Benefits", ref: benefitsRef },
+    { id: "eligibility", label: "Eligibility", ref: eligibilityRef },
+    { id: "process", label: "Application Process", ref: processRef },
+    { id: "docs", label: "Documents Required", ref: docsRef },
   ];
 
-  // Fetch Scheme
   useEffect(() => {
     async function fetchScheme() {
       try {
         const response = await getSchemeById(id);
         if (!response?.success) return;
-
         let data = response.data;
-        const parseIfString = (v) =>
-          typeof v === "string" ? JSON.parse(v) : v;
-
-        data.details = parseIfString(data.details);
-        data.benefits = parseIfString(data.benefits);
-        data.eligibility = parseIfString(data.eligibility);
-        data.application_process = parseIfString(data.application_process);
-        data.documents_required = parseIfString(data.documents_required);
-
+        const p = (v) => (typeof v === "string" ? JSON.parse(v) : v);
+        data.details = p(data.details);
+        data.benefits = p(data.benefits);
+        data.eligibility = p(data.eligibility);
+        data.application_process = p(data.application_process);
+        data.documents_required = p(data.documents_required);
         setScheme(data);
       } catch (error) {
         console.error(error);
       }
     }
-
     fetchScheme();
   }, [id]);
 
-  // Scroll Spy
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPos = window.scrollY + 180;
-
-      sections.forEach((sec) => {
+      const scrollPos = window.scrollY + 140;
+      sidebarSections.forEach((sec) => {
         if (!sec.ref.current) return;
-
         const top = sec.ref.current.offsetTop;
         const height = sec.ref.current.offsetHeight;
-
         if (scrollPos >= top && scrollPos < top + height) {
           setActive(sec.id);
         }
       });
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollTo = (ref) => {
-    window.scrollTo({
-      top: ref.current.offsetTop - 110,
-      behavior: "smooth"
-    });
-  };
-
-  const downloadPDF = () => {
-    window.print(); // Simple browser print-to-PDF
+    window.scrollTo({ top: ref.current.offsetTop - 100, behavior: "smooth" });
   };
 
   if (!scheme) {
     return (
       <>
         <Navbar />
-        <p className="p-10">Loading...</p>
+        <div className="pt-20 min-h-screen bg-white flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-8 h-8 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
+            <p className="text-slate-400 text-sm">Loading...</p>
+          </div>
+        </div>
       </>
     );
   }
+
+  const proc = scheme.application_process || {};
+  const details = scheme.details || {};
+  const benefits = scheme.benefits || {};
 
   return (
     <>
       <Navbar />
 
-      <div className="pt-20 min-h-screen bg-slate-50 flex">
+      <div className="min-h-screen bg-white flex pt-20">
 
-        {/* Sidebar */}
-        <aside className="hidden lg:block w-72 border-r border-slate-200 bg-white">
-          <div className="sticky top-24 px-6 py-8">
-            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-6">
-              Scheme Sections
-            </h2>
-
-            <ul className="space-y-3">
-              <SidebarItem label="Overview" active={active === "details"} onClick={() => scrollTo(detailsRef)} />
-              <SidebarItem label="Benefits" active={active === "benefits"} onClick={() => scrollTo(benefitsRef)} />
-              <SidebarItem label="Eligibility" active={active === "eligibility"} onClick={() => scrollTo(eligibilityRef)} />
-              <SidebarItem label="Application Process" active={active === "process"} onClick={() => scrollTo(processRef)} />
-              <SidebarItem label="Documents Required" active={active === "docs"} onClick={() => scrollTo(docsRef)} />
+        {/* ===== SIDEBAR ===== */}
+        <aside className="hidden lg:block w-64 shrink-0">
+          <nav className="sticky top-24 py-12 pl-6">
+            <ul className="border-l border-gray-300">
+              {sidebarSections.map((sec) => (
+                <li
+                  key={sec.id}
+                  onClick={() => scrollTo(sec.ref)}
+                  className={`cursor-pointer block py-6 pl-6 text-[16px] leading-snug transition-colors
+                    ${active === sec.id
+                      ? "text-gray-900 font-semibold border-l-[3px] border-gray-900 -ml-px"
+                      : "text-gray-600 font-normal hover:text-gray-900"
+                    }`}
+                >
+                  {sec.label}
+                </li>
+              ))}
             </ul>
-          </div>
+          </nav>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 px-8 py-8 space-y-10 max-w-5xl mx-auto">
+        {/* ===== MAIN ===== */}
+        <main className="flex-1 max-w-[820px] px-10 lg:px-16 py-10">
 
-          {/* Header */}
-          <div className="bg-white border border-slate-200 rounded-xl px-8 py-6 shadow-sm"> 
-            <h1 className="text-3xl font-semibold text-slate-800"> {scheme.scheme_name} </h1> 
-            <div className="flex flex-wrap gap-3 mt-3 text-sm"> 
-              <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-md"> 
-                {scheme.state || "Central Government"} </span> 
-                <span className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-md"> {scheme.category} </span> 
-                {scheme.min_land_acres && ( <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-md"> 
-                  Min Land: {scheme.min_land_acres} acre(s) </span> )} </div> 
-
-            {/* PDF BUTTON */}
-            {/* <button
-              onClick={downloadPDF}
-              className="bg-slate-800 text-white px-5 py-2 rounded-lg text-sm font-medium shadow hover:bg-slate-900 transition"
-            >
-              Download PDF
-            </button> */}
-          </div>
-
-          {/* DETAILS */}
-          <SectionWrapper id="details" sectionRef={detailsRef} title="Scheme Overview">
-            <p className="text-slate-600 leading-relaxed">
-              {scheme.details?.description}
-            </p>
-            {scheme.details?.technical_highlights?.length > 0 && 
-            ( <div className="mt-6"> 
-              <h3 className="text-xl font-semibold text-slate-700 mb-3"> Technical Highlights </h3> 
-              <ul className="list-disc ml-6 space-y-2 text-slate-600"> 
-                {scheme.details.technical_highlights.map((t, i) => ( <li key={i}>{t}</li> ))} </ul>
-                 </div> )}
-          </SectionWrapper>
-
-          {/* BENEFITS */}
-          <SectionWrapper
-            id="benefits"
-            sectionRef={benefitsRef}
-            title="Benefits & Financial Assistance"
+          {/* Back button - compact */}
+          <button
+            onClick={() => navigate("/home")}
+            className="inline-flex items-center gap-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium mb-6 transition-colors"
           >
-            <div className="grid md:grid-cols-2 gap-6">
-              {scheme.benefits?.assistance_details?.length > 0 ? (
-                scheme.benefits.assistance_details.map((b, i) => (
-                  <div
-                    key={i}
-                    className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition"
-                  >
-                    <h3 className="text-base font-semibold text-slate-800">
-                      {b.scheme_component}
-                    </h3>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Schemes
+          </button>
 
-                    <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-                      {b.assistance}
-                    </p>
+          {/* ─── HEADER ─── */}
+          <div className="mb-10">
+            <p className="text-sm font-medium text-gray-500 mb-2">
+              {scheme.state || "Central Government"}
+            </p>
+            <h1 className="text-[32px] font-bold text-gray-900 leading-tight mb-5">
+              {scheme.scheme_name}
+            </h1>
 
-                    <div className="mt-4 text-sm text-slate-600 space-y-1">
-                      <p>
-                        <span className="font-medium text-slate-700">Max Limit:</span> {b.max_limit}
-                      </p>
-                      <p>
-                        <span className="font-medium text-slate-700">Implementing Agency:</span> {b.implementing_agency}
-                      </p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No benefits listed.</p>
-              )}
+            {/* Tags */}
+            <div className="flex flex-wrap gap-2.5 mb-6">
+              <Tag label={scheme.category} color="emerald" />
+              {proc.mode && <Tag label={proc.mode} color="blue" />}
+              {scheme.min_land_acres && <Tag label={`Min ${scheme.min_land_acres} Acre`} color="violet" />}
+              {scheme.supported_crops?.map((crop, i) => (
+                <Tag key={i} label={crop} color="green" />
+              ))}
             </div>
 
-            {scheme.benefits?.disbursing_authority && (
-              <div className="mt-6 bg-slate-100 border border-slate-200 rounded-lg p-4 text-sm text-slate-700">
-                <span className="font-semibold text-slate-800">
-                  Disbursing Authority:
-                </span>{" "}
-                {scheme.benefits.disbursing_authority}
+            {/* Financial summary */}
+            {details.financial_assistance_summary && (
+              <div className="bg-emerald-50 border-l-4 border-emerald-600 rounded-r px-5 py-4 mb-6">
+                <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">Financial Assistance</p>
+                <p className="text-[16px] text-gray-900 font-semibold leading-relaxed">
+                  {details.financial_assistance_summary}
+                </p>
               </div>
             )}
-          </SectionWrapper>
 
-          {/* ELIGIBILITY */}
-          <SectionWrapper id="eligibility" sectionRef={eligibilityRef} title="Eligibility Criteria">
-            <div className="space-y-2">
-              {scheme.eligibility?.length > 0 ? (
-                scheme.eligibility.map((e, i) => (
-                  <ChecklistItem key={i} text={e} />
-                ))
-              ) : (
-                <p>No eligibility conditions available.</p>
+            {/* Apply CTA */}
+            {proc.portal_url && (
+              <a
+                href={proc.portal_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-3.5 rounded-lg text-base font-bold hover:bg-emerald-700 shadow-md hover:shadow-lg transition-all"
+              >
+                Apply Now →
+              </a>
+            )}
+          </div>
+
+          <hr className="border-t border-gray-200 mb-10" />
+
+          {/* ─── DETAILS ─── */}
+          <section ref={detailsRef} id="details" className="mb-14">
+            <h2 className="text-2xl font-bold text-gray-900 mb-5">Details</h2>
+            <p className="text-[16px] text-gray-700 leading-[1.9]">
+              {details.description || "No description available."}
+            </p>
+
+            {details.technical_highlights?.length > 0 && (
+              <div className="mt-8">
+                <p className="text-[16px] text-gray-700 leading-[1.9]">
+                  {details.technical_highlights.map((t, i) => (
+                    <span key={i} className="block mb-4">{t}</span>
+                  ))}
+                </p>
+              </div>
+            )}
+          </section>
+
+          {/* ─── BENEFITS ─── */}
+          <section ref={benefitsRef} id="benefits" className="mb-14">
+            <h2 className="text-2xl font-bold text-gray-900 mb-5">Benefits</h2>
+
+            {benefits.assistance_details?.length > 0 ? (
+              <div className="space-y-6">
+                {benefits.assistance_details.map((b, i) => (
+                  <div key={i} className="border-l-3 border-emerald-400 pl-5">
+                    <h4 className="font-semibold text-gray-900 text-[17px] mb-1">{b.scheme_component}</h4>
+                    <p className="text-[16px] text-gray-700 leading-[1.9]">{b.assistance}</p>
+                    <div className="mt-3 flex flex-wrap gap-x-8 text-[15px] text-gray-600">
+                      {b.max_limit && (
+                        <span><span className="font-semibold text-gray-800">Max Limit:</span> {b.max_limit}</span>
+                      )}
+                      {b.implementing_agency && (
+                        <span><span className="font-semibold text-gray-800">Agency:</span> {b.implementing_agency}</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[16px] text-gray-400">No benefits listed.</p>
+            )}
+
+            {benefits.disbursing_authority && (
+              <p className="mt-5 text-[16px] text-gray-700 leading-[1.9]">
+                <span className="font-semibold text-gray-900">Disbursing Authority:</span> {benefits.disbursing_authority}
+              </p>
+            )}
+          </section>
+
+          {/* ─── ELIGIBILITY ─── */}
+          <section ref={eligibilityRef} id="eligibility" className="mb-14">
+            <h2 className="text-2xl font-bold text-gray-900 mb-5">Eligibility</h2>
+
+            {scheme.eligibility?.length > 0 ? (
+              <ul className="space-y-4">
+                {scheme.eligibility.map((e, i) => (
+                  <li key={i} className="flex items-start gap-3 text-[16px] text-gray-700 leading-[1.9]">
+                    <span className="mt-2 w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                    {e}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[16px] text-gray-400">No eligibility conditions available.</p>
+            )}
+          </section>
+
+          {/* ─── APPLICATION PROCESS ─── */}
+          <section ref={processRef} id="process" className="mb-14">
+            <h2 className="text-2xl font-bold text-gray-900 mb-5">Application Process</h2>
+
+            {/* Mode & Portal */}
+            <div className="flex flex-wrap gap-x-10 gap-y-2 mb-6 text-[16px]">
+              {proc.mode && (
+                <div>
+                  <span className="font-semibold text-gray-900">Mode: </span>
+                  <span className="text-gray-700">{proc.mode}</span>
+                </div>
+              )}
+              {proc.portal_name && (
+                <div>
+                  <span className="font-semibold text-gray-900">Portal: </span>
+                  <span className="text-gray-700">{proc.portal_name}</span>
+                </div>
               )}
             </div>
-          </SectionWrapper>
 
-          {/* APPLICATION PROCESS */}
-          <SectionWrapper id="process" sectionRef={processRef} title="Application Process">
-
-            <div className="mb-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5">
-
-              {scheme.application_process?.mode && (
-                <div className="mb-4">
-                  <p className="text-xs uppercase tracking-wide text-blue-600 font-semibold">
-                    Application Mode
-                  </p>
-                  <p className="text-slate-800 font-semibold text-lg mt-1">
-                    {scheme.application_process.mode}
-                  </p>
-                </div>
-              )}
-
-              {scheme.application_process?.portal_name && (
-                <div className="mb-4">
-                  <p className="text-xs uppercase tracking-wide text-blue-600 font-semibold">
-                    Official Portal
-                  </p>
-                  <p className="text-slate-800 font-semibold text-base mt-1">
-                    {scheme.application_process.portal_name}
-                  </p>
-                </div>
-              )}
-
-              {scheme.application_process?.portal_url && (
+            {/* Links */}
+            <div className="flex flex-wrap gap-3 mb-6">
+              {proc.portal_url && (
                 <a
-                  href={scheme.application_process.portal_url}
+                  href={proc.portal_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-medium shadow hover:bg-blue-700 transition"
+                  className="inline-flex items-center gap-1 bg-emerald-600 text-white px-5 py-2.5 rounded-md text-[15px] font-medium hover:bg-emerald-700 transition"
                 >
-                  Visit Official Portal →
+                  Visit Portal →
+                </a>
+              )}
+              {proc.application_status_url && proc.application_status_url !== proc.portal_url && (
+                <a
+                  href={proc.application_status_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 border border-gray-300 text-gray-700 px-5 py-2.5 rounded-md text-[15px] font-medium hover:bg-gray-50 transition"
+                >
+                  Check Status →
                 </a>
               )}
             </div>
 
-            <div className="space-y-6">
-              {scheme.application_process?.steps?.length > 0 ? (
-                scheme.application_process.steps.map((step, i) => (
-                  <TimelineStep key={i} step={step} index={i} />
-                ))
-              ) : (
-                <p>No steps listed.</p>
-              )}
-            </div>
-          </SectionWrapper>
+            {/* Steps */}
+            {proc.steps?.length > 0 && (
+              <div className="space-y-0">
+                {proc.steps.map((step, i) => (
+                  <div key={i} className="flex gap-3">
+                    <div className="flex flex-col items-center">
+                      <div className="w-8 h-8 bg-emerald-600 text-white rounded-full flex items-center justify-center text-sm font-bold shrink-0">
+                        {i + 1}
+                      </div>
+                      {i < proc.steps.length - 1 && (
+                        <div className="w-px flex-1 bg-emerald-200 my-0.5" />
+                      )}
+                    </div>
+                    <p className="flex-1 text-[16px] text-gray-700 leading-[1.9] pt-1 pb-4">
+                      {step}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
 
-          {/* DOCUMENTS */}
-          <SectionWrapper id="docs" sectionRef={docsRef} title="Documents Required">
-            <div className="flex flex-wrap gap-4">
-              {scheme.documents_required?.length > 0 ? (
-                scheme.documents_required.map((d, i) => (
-                  <DocumentCard key={i} doc={d} />
-                ))
-              ) : (
-                <p>No documents listed.</p>
-              )}
-            </div>
-          </SectionWrapper>
+            {proc.payment_note && (
+              <p className="mt-4 text-[15px] text-gray-600 border-t border-gray-100 pt-4">
+                <span className="font-semibold text-gray-800">Note:</span> {proc.payment_note}
+              </p>
+            )}
+          </section>
+
+          {/* ─── DOCUMENTS ─── */}
+          <section ref={docsRef} id="docs" className="mb-14">
+            <h2 className="text-2xl font-bold text-gray-900 mb-5">Documents Required</h2>
+
+            {scheme.documents_required?.length > 0 ? (
+              <ul className="space-y-3">
+                {scheme.documents_required.map((d, i) => (
+                  <li key={i} className="flex items-center gap-3 text-[16px] text-gray-700">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                    {d}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[16px] text-gray-400">No documents listed.</p>
+            )}
+          </section>
 
         </main>
       </div>
     </>
+  );
+}
+
+/* ─── Helpers ─── */
+
+function Tag({ label, color }) {
+  const colors = {
+    emerald: "border-emerald-300 text-emerald-800 bg-emerald-100",
+    blue: "border-blue-300 text-blue-800 bg-blue-100",
+    violet: "border-violet-300 text-violet-800 bg-violet-100",
+    green: "border-green-300 text-green-800 bg-green-100",
+    amber: "border-amber-300 text-amber-800 bg-amber-100",
+  };
+  return (
+    <span className={`px-3.5 py-1.5 rounded-full border text-[13px] font-semibold ${colors[color] || colors.emerald}`}>
+      {label}
+    </span>
   );
 }

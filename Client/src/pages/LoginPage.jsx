@@ -32,7 +32,7 @@ export default function LoginPage() {
     profile: formData,   // store full profile here
   })
 
-  navigate("/")
+  navigate("/home")
 }
 
 

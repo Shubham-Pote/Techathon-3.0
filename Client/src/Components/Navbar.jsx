@@ -14,7 +14,7 @@ export default function Navbar({ variant }) {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
-    if (location.pathname === "/") {
+    if (location.pathname === "/home") {
       const handleScroll = () => {
         setScrolled(window.scrollY > 50)
       }
@@ -23,7 +23,7 @@ export default function Navbar({ variant }) {
     }
   }, [location])
 
-  const isHome = location.pathname === "/"
+  const isHome = location.pathname === "/home"
 
   const navbarStyle = isHome
     ? scrolled
@@ -35,29 +35,34 @@ export default function Navbar({ variant }) {
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${navbarStyle} text-white`}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-12 py-4">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-8 py-3.5">
 
         {/* LEFT */}
-        <h1
-          className="text-xl font-semibold tracking-wide cursor-pointer hover:opacity-90 transition -ml-30"
-          onClick={() => navigate("/")}
+        <div 
+          className="flex items-center gap-2 cursor-pointer hover:opacity-90 transition"
+          onClick={() => navigate("/home")}
         >
-          IN Farmer Support Portal
-        </h1>
+          <div className="w-9 h-9 bg-white/10 backdrop-blur-sm rounded-lg flex items-center justify-center">
+            <span className="text-emerald-300 text-xl font-bold">🌾</span>
+          </div>
+          <h1 className="text-xl font-bold tracking-tight">
+            Krishiculture
+          </h1>
+        </div>
 
         {/* RIGHT */}
-        <div className="flex gap-8 items-center text-sm font-medium">
+        <div className="flex gap-6 items-center text-sm font-medium">
 
           <LanguageToggle />
 
           <button
-            onClick={() => navigate("/")}
-            className="hover:text-emerald-300 transition"
+            onClick={() => navigate("/home")}
+            className="hover:text-emerald-200 transition-colors"
           >
             Schemes
           </button>
 
-          <button className="hover:text-emerald-300 transition">
+          <button className="hover:text-emerald-200 transition-colors">
             Help
           </button>
 
@@ -66,7 +71,7 @@ export default function Navbar({ variant }) {
               if (user) logout()
               else navigate("/login")
             }}
-            className="px-4 py-1.5 rounded-lg border border-white/30 hover:bg-white hover:text-emerald-800 transition -mr-20"
+            className="px-5 py-2 rounded-lg bg-white/10 border border-white/20 hover:bg-white hover:text-emerald-800 transition-all font-semibold"
           >
             {!user ? "Login" : "Logout"}
           </button>

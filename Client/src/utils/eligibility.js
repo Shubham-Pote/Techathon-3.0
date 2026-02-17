@@ -8,23 +8,20 @@ export function isEligible(scheme, farmer) {
   // land requirement
   if (
     scheme.min_land_acres !== null &&
-    farmer.land_acres < scheme.min_land_acres
+    farmer.landSizeAcres !== null &&
+    farmer.landSizeAcres < scheme.min_land_acres
   )
     return false
 
   // crop match
   if (
     scheme.supported_crops.length &&
+    farmer.crops.length &&
     !scheme.supported_crops.some((c) =>
       farmer.crops.includes(c)
     )
   )
     return false
-
-  // required documents/conditions
-  if (!farmer.land_owner) return false
-  if (!farmer.has_aadhaar) return false
-  if (!farmer.has_bank_account) return false
 
   return true
 }
