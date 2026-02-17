@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
 import LoginPage from "./pages/LoginPage"
+import LandingPage from "./pages/LandingPage"
 
 import { AuthProvider } from "./context/AuthContext"
 import { LanguageProvider } from "./context/LanguageContext"
@@ -14,8 +15,11 @@ export default function App() {
 
           <Routes>
 
-            {/* Home */}
-            <Route path="/" element={<Home />} />
+            {/* Landing Page */}
+            <Route path="/" element={<LandingPage />} />
+
+            {/* Home (Dashboard) */}
+            <Route path="/home" element={<Home />} />
 
             {/* Login Page */}
             <Route path="/login" element={<LoginPage />} />
