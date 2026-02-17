@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { AuthRequest } from "../../middlewares/auth.middleware.js";
-import { getAllSchemesService, getSchemeByIdService } from "./schemes.service.js";
+import {
+  getAllSchemesService,
+  getSchemeByIdService
+} from "./schemes.service.js";
 
 export const getAllSchemes = async (req: AuthRequest, res: Response) => {
   try {
@@ -18,9 +21,12 @@ export const getAllSchemes = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const getSchemeById = async (req: Request, res: Response) => {
+export const getSchemeById = async (
+  req: Request<{ schemeId: string }>,
+  res: Response
+) => {
   try {
-    const scheme = await getSchemeByIdService(req.params.schemeId as string);
+    const scheme = await getSchemeByIdService(req.params.schemeId);
 
     if (!scheme) {
       return res.status(404).json({
@@ -33,6 +39,7 @@ export const getSchemeById = async (req: Request, res: Response) => {
       success: true,
       data: scheme
     });
+
   } catch (err: any) {
     res.status(500).json({
       success: false,

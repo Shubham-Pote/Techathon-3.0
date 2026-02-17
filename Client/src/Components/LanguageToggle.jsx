@@ -11,6 +11,8 @@ export default function LanguageToggle() {
     >
       <option value="en">English</option>
       <option value="hi">हिंदी</option>
+      <option value="mr">मराठी</option>
+
     </select>
   )
 }

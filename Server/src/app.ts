@@ -1,4 +1,6 @@
 import express from "express";
+import cors from "cors";
+
 import authRoutes from "./modules/auth/auth.routes.js";
 import farmerRoutes from "./modules/farmer/farmer.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
@@ -6,15 +8,18 @@ import schemeRoutes from "./modules/Schemes/schemes.routes.js";
 
 const app = express();
 
-// Middleware to parse JSON
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 app.use(express.json());
 
-// Health check route
+// Health check
 app.get("/health", (_req, res) => {
-  res.status(200).json({ status: "OK" });
+  res.json({ status: "OK" });
 });
 
-// 🔐 Auth routes
 app.use("/auth", authRoutes);
 app.use("/farmers", farmerRoutes);
 app.use("/admin", adminRoutes);

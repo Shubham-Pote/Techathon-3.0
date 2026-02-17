@@ -1,52 +1,54 @@
 import prisma from "../../config/db.js";
 
 export const getAllSchemesService = async (farmer: any) => {
-  const where: any = {
-    isActive: true
-  };
+  const schemes = await prisma.scheme.findMany({
+    where: {
+      isActive: true
+    },
+    include: {
+      content: true
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
 
-  // ✅ State filter (only if farmer has state)
-  if (farmer?.state) {
-    where.OR = [
-      { state: farmer.state },
-      { state: null } // central schemes
-    ];
-  }
+  return schemes.map((s) => ({
+    scheme_id: s.schemeId,
+    scheme_name: s.schemeName,
+    state: s.state,
+    category: s.category,
+    supported_crops: s.supportedCrops,
 
-  // ✅ Land filter (only if farmer has land data)
-  if (
-    farmer?.landSizeAcres !== null &&
-    farmer?.landSizeAcres !== undefined
-  ) {
-    where.minLandAcres = {
-      lte: farmer.landSizeAcres
-    };
-  }
-
-  // ✅ Crop filter (only if farmer selected crops)
-  if (farmer?.crops && farmer.crops.length > 0) {
-    where.supportedCrops = {
-      hasSome: farmer.crops
-    };
-  }
-
-return prisma.scheme.findMany({
-  where,
-  include: {
-    content: true
-  },
-  orderBy: {
-    createdAt: "desc"
-  }
-});
-
+    // ✅ FIXED — matches Prisma schema
+    details: s.content?.details,
+    benefits: s.content?.benefits,
+    eligibility: s.content?.eligibility,
+    application_process: s.content?.applicationProcess,
+    documents_required: s.content?.documentsRequired
+  }));
 };
 
 export const getSchemeByIdService = async (schemeId: string) => {
-  return prisma.scheme.findUnique({
+  const s = await prisma.scheme.findUnique({
     where: { schemeId },
-    include: {
-      content: true
-    }
+    include: { content: true }
   });
+
+  if (!s) return null;
+
+  return {
+    scheme_id: s.schemeId,
+    scheme_name: s.schemeName,
+    state: s.state,
+    category: s.category,
+    supported_crops: s.supportedCrops,
+
+    // ✅ FIXED
+    details: s.content?.details,
+    benefits: s.content?.benefits,
+    eligibility: s.content?.eligibility,
+    application_process: s.content?.applicationProcess,
+    documents_required: s.content?.documentsRequired
+  };
 };

@@ -4,12 +4,11 @@ import { env } from "./config/env.js";
 
 async function startServer() {
   try {
-    // Test DB connection
     await prisma.$connect();
     console.log("✅ Database connected");
 
     app.listen(env.PORT, () => {
-      console.log(`🚀 Server running on port ${env.PORT}`);
+      console.log(`🚀 Server running → http://localhost:${env.PORT}`);
     });
   } catch (error) {
     console.error("❌ Failed to start server", error);
