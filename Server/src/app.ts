@@ -8,6 +8,9 @@ import schemeRoutes from "./modules/Schemes/schemes.routes.js";
 
 const app = express();
 
+// Cron job is scheduled in scheme-scraper.ts to run daily at midnight
+// Manual trigger available via POST /schemes/scrape/trigger
+
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
