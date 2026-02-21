@@ -1,3 +1,5 @@
+import farmer from "../assets/farmer.png"
+
 import { useState, useRef } from "react"
 import { FaRobot, FaMicrophone, FaPaperPlane } from "react-icons/fa"
 
@@ -63,16 +65,19 @@ export default function Chatbot() {
         onClick={() => setOpen(!open)}
         className="
           fixed bottom-6 right-6
-          bg-green-600
-          text-white
-          p-4
+          bg-transparent
+          p-1
           rounded-full
           shadow-xl
           hover:scale-110
           transition
         "
       >
-        <FaRobot size={22} />
+        <img
+  src={farmer}
+  alt="Farmer"
+  className="w-14 h-14 rounded-full object-cover shadow-md"
+/>
       </button>
 
       {/* Chat Window */}
@@ -82,7 +87,7 @@ export default function Chatbot() {
             fixed bottom-20 right-6
             w-[320px]
             h-[420px]
-            bg-white
+            bg-white/60 backdrop-blur-md
             rounded-xl
             shadow-2xl
             flex flex-col
