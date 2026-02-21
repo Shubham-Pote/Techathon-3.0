@@ -3,8 +3,11 @@ import SchemeCard from "./SchemeCard"
 import { getAllSchemes } from "../services/schemeService"
 import { useAuth } from "../context/AuthContext"
 import { isEligible } from "../utils/eligibility"
+import { useTranslation } from "react-i18next"
 
 export default function SchemePage({ search = "" }) {
+  const { t } = useTranslation()
+
   const [schemes, setSchemes] = useState([])
 
   const [stateFilter, setStateFilter] = useState([])
@@ -21,12 +24,11 @@ export default function SchemePage({ search = "" }) {
   const { user } = useAuth()
   const farmerProfile = user?.profile
 
-  /* ================= FETCH SCHEMES ================= */
+  /* ================= FETCH ALL SCHEMES ONCE ================= */
   useEffect(() => {
     async function fetchSchemes() {
       try {
         const res = await getAllSchemes()
-
         if (res?.success && Array.isArray(res.data)) {
           setSchemes(res.data)
         } else {
@@ -36,98 +38,49 @@ export default function SchemePage({ search = "" }) {
         console.error("Scheme fetch error:", err)
         setSchemes([])
       }
-
       setLoading(false)
     }
-
     fetchSchemes()
   }, [])
 
-  /* ================= RESET PAGE ================= */
+  /* ================= RESET PAGE on filter/search change ================= */
   useEffect(() => {
     setCurrentPage(1)
-  }, [
-    stateFilter,
-    categoryFilter,
-    cropFilter,
-    eligibilityFilter,
-    sortOrder,
-    search,
-  ])
+  }, [stateFilter, categoryFilter, cropFilter, eligibilityFilter, sortOrder, search])
 
-  /* ================= UNIQUE VALUES ================= */
-  const states = [
-    ...new Set(schemes.map((s) => s?.state).filter(Boolean)),
-  ]
-
-  const categories = [
-    ...new Set(schemes.map((s) => s?.category).filter(Boolean)),
-  ]
-
-  const crops = [
-    ...new Set(
-      schemes.flatMap((s) => s?.supported_crops || [])
-    ),
-  ]
+  /* ================= UNIQUE VALUES FOR FILTERS ================= */
+  const states = [...new Set(schemes.map((s) => s?.state).filter(Boolean))]
+  const categories = [...new Set(schemes.map((s) => s?.category).filter(Boolean))]
+  const crops = [...new Set(schemes.flatMap((s) => s?.supported_crops || []))]
 
   /* ================= FILTER + SORT ================= */
   const filtered = useMemo(() => {
     const searchTerm = search?.toLowerCase() || ""
 
     let result = schemes.filter((s) => {
-      const eligible = farmerProfile
-        ? isEligible(s, farmerProfile)
-        : true
-
+      const eligible = farmerProfile ? isEligible(s, farmerProfile) : true
       const schemeName = (s?.scheme_name || "").toLowerCase()
       const schemeCrops = s?.supported_crops || []
 
       return (
         schemeName.includes(searchTerm) &&
-        (stateFilter.length === 0 ||
-          stateFilter.includes(s?.state)) &&
-        (categoryFilter.length === 0 ||
-          categoryFilter.includes(s?.category)) &&
-        (cropFilter.length === 0 ||
-          schemeCrops.length === 0 ||
-          cropFilter.some((c) => schemeCrops.includes(c))) &&
+        (stateFilter.length === 0 || stateFilter.includes(s?.state)) &&
+        (categoryFilter.length === 0 || categoryFilter.includes(s?.category)) &&
+        (cropFilter.length === 0 || schemeCrops.length === 0 || cropFilter.some((c) => schemeCrops.includes(c))) &&
         (eligibilityFilter === "all" ||
           (eligibilityFilter === "eligible" && eligible) ||
           (eligibilityFilter === "notEligible" && !eligible))
       )
     })
 
-    if (sortOrder === "asc") {
-      result.sort((a, b) =>
-        (a?.scheme_name || "").localeCompare(
-          b?.scheme_name || ""
-        )
-      )
-    }
-
-    if (sortOrder === "desc") {
-      result.sort((a, b) =>
-        (b?.scheme_name || "").localeCompare(
-          a?.scheme_name || ""
-        )
-      )
-    }
+    if (sortOrder === "asc") result.sort((a, b) => (a?.scheme_name || "").localeCompare(b?.scheme_name || ""))
+    if (sortOrder === "desc") result.sort((a, b) => (b?.scheme_name || "").localeCompare(a?.scheme_name || ""))
 
     return result
-  }, [
-    schemes,
-    search,
-    stateFilter,
-    categoryFilter,
-    cropFilter,
-    eligibilityFilter,
-    sortOrder,
-    farmerProfile,
-  ])
+  }, [schemes, search, stateFilter, categoryFilter, cropFilter, eligibilityFilter, sortOrder, farmerProfile])
 
   /* ================= PAGINATION ================= */
   const totalPages = Math.ceil(filtered.length / schemesPerPage)
-
   const paginatedSchemes = filtered.slice(
     (currentPage - 1) * schemesPerPage,
     currentPage * schemesPerPage
@@ -140,124 +93,125 @@ export default function SchemePage({ search = "" }) {
     cropFilter.length +
     (eligibilityFilter !== "all" ? 1 : 0)
 
-  /* ================= STATS ================= */
-  const uniqueStates = states.length
-  const totalSchemes = schemes.length
-
   /* ================= UI ================= */
   return (
     <div className="flex bg-slate-50 min-h-screen">
 
       {/* ================= SIDEBAR ================= */}
-      <aside className="hidden md:block w-72 shrink-0 sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto bg-white border-r border-slate-200 px-5 py-6">
+       <aside className="hidden md:block w-80 shrink-0 sticky top-20 h-[calc(100vh-5rem)]">
+        <div className="h-full rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col">
+          <div className="px-6 py-5 border-b border-slate-100">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-lg text-slate-800">
+                {t('schemes.filters')}
+              </h2>
 
-        <div className="flex justify-between items-center mb-5">
-          <h2 className="font-semibold text-base text-slate-800">
-            Filters
-          </h2>
+              {activeFilterCount > 0 && (
+                <span className="text-[11px] bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full font-semibold">
+                  {activeFilterCount} {t('schemes.active')}
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
+              {t('schemes.filtersDesc')}
+            </p>
+          </div>
 
-          {activeFilterCount > 0 && (
-            <span className="text-[11px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-semibold">
-              {activeFilterCount} active
-            </span>
-          )}
-        </div>
-
-        <div className="space-y-5">
-
-          {/* STATE */}
-          <FilterSection title="State" count={stateFilter.length}>
-            {states.map((s) => (
-              <CheckboxItem
-                key={s}
-                label={s}
-                checked={stateFilter.includes(s)}
-                onChange={() =>
-                  setStateFilter((prev) =>
-                    prev.includes(s)
-                      ? prev.filter((x) => x !== s)
-                      : [...prev, s]
-                  )
-                }
-              />
-            ))}
-          </FilterSection>
-
-          {/* CATEGORY */}
-          <FilterSection title="Support Type" count={categoryFilter.length}>
-            {categories.map((c) => (
-              <CheckboxItem
-                key={c}
-                label={c}
-                checked={categoryFilter.includes(c)}
-                onChange={() =>
-                  setCategoryFilter((prev) =>
-                    prev.includes(c)
-                      ? prev.filter((x) => x !== c)
-                      : [...prev, c]
-                  )
-                }
-              />
-            ))}
-          </FilterSection>
-
-          {/* CROPS */}
-          <FilterSection title="Crop" count={cropFilter.length}>
-            {crops.map((c) => (
-              <CheckboxItem
-                key={c}
-                label={c}
-                checked={cropFilter.includes(c)}
-                onChange={() =>
-                  setCropFilter((prev) =>
-                    prev.includes(c)
-                      ? prev.filter((x) => x !== c)
-                      : [...prev, c]
-                  )
-                }
-              />
-            ))}
-          </FilterSection>
-
-          {/* ELIGIBILITY */}
-          {farmerProfile && (
-            <FilterSection title="Eligibility">
-              <RadioItem
-                label="All Schemes"
-                value="all"
-                selected={eligibilityFilter}
-                onChange={setEligibilityFilter}
-              />
-              <RadioItem
-                label="Eligible Only"
-                value="eligible"
-                selected={eligibilityFilter}
-                onChange={setEligibilityFilter}
-              />
-              <RadioItem
-                label="Not Eligible"
-                value="notEligible"
-                selected={eligibilityFilter}
-                onChange={setEligibilityFilter}
-              />
+          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
+            {/* STATE */}
+            <FilterSection title={t('schemes.state')} count={stateFilter.length}>
+              {states.map((s) => (
+                <CheckboxItem
+                  key={s}
+                  label={s}
+                  checked={stateFilter.includes(s)}
+                  onChange={() =>
+                    setStateFilter((prev) =>
+                      prev.includes(s)
+                        ? prev.filter((x) => x !== s)
+                        : [...prev, s]
+                    )
+                  }
+                />
+              ))}
             </FilterSection>
-          )}
 
-          {/* CLEAR */}
+            {/* CATEGORY */}
+            <FilterSection title={t('schemes.supportType')} count={categoryFilter.length}>
+              {categories.map((c) => (
+                <CheckboxItem
+                  key={c}
+                  label={c}
+                  checked={categoryFilter.includes(c)}
+                  onChange={() =>
+                    setCategoryFilter((prev) =>
+                      prev.includes(c)
+                        ? prev.filter((x) => x !== c)
+                        : [...prev, c]
+                    )
+                  }
+                />
+              ))}
+            </FilterSection>
+
+            {/* CROPS */}
+            <FilterSection title={t('schemes.crop')} count={cropFilter.length}>
+              {crops.map((c) => (
+                <CheckboxItem
+                  key={c}
+                  label={c}
+                  checked={cropFilter.includes(c)}
+                  onChange={() =>
+                    setCropFilter((prev) =>
+                      prev.includes(c)
+                        ? prev.filter((x) => x !== c)
+                        : [...prev, c]
+                    )
+                  }
+                />
+              ))}
+            </FilterSection>
+
+            {/* ELIGIBILITY */}
+            {farmerProfile && (
+              <FilterSection title={t('schemes.eligibility')}>
+                <RadioItem
+                  label={t('schemes.allSchemes')}
+                  value="all"
+                  selected={eligibilityFilter}
+                  onChange={setEligibilityFilter}
+                />
+                <RadioItem
+                  label={t('schemes.eligibleOnly')}
+                  value="eligible"
+                  selected={eligibilityFilter}
+                  onChange={setEligibilityFilter}
+                />
+                <RadioItem
+                  label={t('schemes.notEligible')}
+                  value="notEligible"
+                  selected={eligibilityFilter}
+                  onChange={setEligibilityFilter}
+                />
+              </FilterSection>
+            )}
+          </div>
+
           {activeFilterCount > 0 && (
-            <button
-              onClick={() => {
-                setStateFilter([])
-                setCategoryFilter([])
-                setCropFilter([])
-                setEligibilityFilter("all")
-              }}
-              className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium transition"
-            >
-              Clear All Filters
-            </button>
+            <div className="px-6 py-4 border-t border-slate-100">
+              <button
+                onClick={() => {
+                  setStateFilter([])
+                  setCategoryFilter([])
+                  setCropFilter([])
+                  setEligibilityFilter("all")
+                }}
+                className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition"
+              >
+                {t('schemes.clearFilters')}
+              </button>
+            </div>
           )}
-
         </div>
       </aside>
 
@@ -265,25 +219,17 @@ export default function SchemePage({ search = "" }) {
       <main className="flex-1 px-6 py-6 lg:px-8">
 
         {/* Stats bar */}
-        {!loading && (
-          <div className="flex flex-wrap gap-4 mb-5 text-sm text-slate-500">
-            <span><span className="font-semibold text-slate-800">{totalSchemes}</span> total</span>
-            <span className="text-slate-300">|</span>
-            <span><span className="font-semibold text-slate-800">{uniqueStates}</span> states</span>
-            <span className="text-slate-300">|</span>
-            <span><span className="font-semibold text-emerald-700">{filtered.length}</span> matching</span>
-          </div>
-        )}
+       
 
         {/* Title + Sort */}
         <div className="flex justify-between items-center mb-5">
           <div>
             <h1 className="text-xl font-bold text-slate-800">
-              Available Schemes
+              {t('schemes.heading')}
             </h1>
             {!loading && (
               <p className="text-sm text-slate-500 mt-0.5">
-                Showing {paginatedSchemes.length} of {filtered.length} schemes
+                {t('schemes.showing', { n: paginatedSchemes.length, total: filtered.length })}
               </p>
             )}
           </div>
@@ -293,16 +239,16 @@ export default function SchemePage({ search = "" }) {
             onChange={(e) => setSortOrder(e.target.value)}
             className="px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 outline-none"
           >
-            <option value="">Sort: Default</option>
-            <option value="asc">Sort: A → Z</option>
-            <option value="desc">Sort: Z → A</option>
+            <option value="">{t('schemes.sortDefault')}</option>
+            <option value="asc">{t('schemes.sortAZ')}</option>
+            <option value="desc">{t('schemes.sortZA')}</option>
           </select>
         </div>
 
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
-            <p className="text-slate-500 text-sm">Loading schemes...</p>
+            <p className="text-slate-500 text-sm">{t('schemes.loading')}</p>
           </div>
         ) : (
           <>
@@ -316,8 +262,8 @@ export default function SchemePage({ search = "" }) {
 
               {filtered.length === 0 && (
                 <div className="text-center py-16">
-                  <p className="text-slate-600 font-medium">No schemes found</p>
-                  <p className="text-sm text-slate-400 mt-1">Try adjusting your filters or search</p>
+                  <p className="text-slate-600 font-medium">{t('schemes.noResults')}</p>
+                  <p className="text-sm text-slate-400 mt-1">{t('schemes.noResultsHint')}</p>
                 </div>
               )}
             </div>
@@ -399,6 +345,7 @@ function RadioItem({ label, value, selected, onChange }) {
 }
 
 function Pagination({ currentPage, totalPages, setCurrentPage }) {
+  const { t } = useTranslation()
   return (
     <div className="flex items-center justify-center gap-2 mt-8">
 
@@ -407,7 +354,7 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
         onClick={() => setCurrentPage((p) => p - 1)}
         className="px-4 py-2 text-sm border border-slate-200 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition font-medium text-slate-700"
       >
-        ← Previous
+        {t('schemes.prev')}
       </button>
 
       <div className="flex items-center gap-1 mx-2">
@@ -443,7 +390,7 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
         onClick={() => setCurrentPage((p) => p + 1)}
         className="px-4 py-2 text-sm border border-slate-200 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition font-medium text-slate-700"
       >
-        Next →
+        {t('schemes.next')}
       </button>
 
     </div>

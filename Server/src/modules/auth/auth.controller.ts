@@ -10,8 +10,8 @@ export async function requestOtpController(req: Request, res: Response) {
   }
 
   try {
-    await requestOtp(mobile);
-    res.status(200).json({ message: "OTP sent successfully" });
+    const result = await requestOtp(mobile);
+    res.status(200).json({ message: "OTP sent successfully", otp: result.otp });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Failed to send OTP" });

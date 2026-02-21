@@ -4,6 +4,7 @@ import api from "../../utils/api"
 export default function PhoneStep({ phone, setPhone, next }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [devOtp, setDevOtp] = useState(null)
 
   const handleSendOtp = async () => {
     if (!phone || phone.length !== 10) {
@@ -14,12 +15,16 @@ export default function PhoneStep({ phone, setPhone, next }) {
     try {
       setLoading(true)
       setError("")
+      setDevOtp(null)
 
-      await api.post("/auth/request-otp", {
+      const res = await api.post("/auth/request-otp", {
         mobile: phone,
       })
 
-      next()
+      // Show OTP on screen (dev/demo mode — no real SMS gateway)
+      if (res.data.otp) setDevOtp(res.data.otp)
+
+      next(res.data.otp || null)
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send OTP")
     } finally {

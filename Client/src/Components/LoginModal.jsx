@@ -9,10 +9,20 @@ export default function LoginModal({ onClose }) {
 
   const [step, setStep] = useState(1)
   const [phone, setPhone] = useState("")
-  const [userData, setUserData] = useState({})
+  const [tempToken, setTempToken] = useState(null)
+  const [devOtp, setDevOtp] = useState(null)
 
-  const handleFinish = (details) => {
-    login(details)
+  const handleOtpSuccess = (token) => {
+    setTempToken(token)
+    setStep(3)
+  }
+
+  const handleFinish = (userData) => {
+    login({
+      mobile: phone,
+      token: tempToken,
+      profile: userData,
+    })
     onClose()
   }
 
@@ -32,14 +42,15 @@ export default function LoginModal({ onClose }) {
           <PhoneStep
             phone={phone}
             setPhone={setPhone}
-            next={() => setStep(2)}
+            next={(otp) => { setDevOtp(otp); setStep(2) }}
           />
         )}
 
         {step === 2 && (
           <OtpStep
             phone={phone}
-            next={() => setStep(3)}
+            devOtp={devOtp}
+            onSuccess={handleOtpSuccess}
           />
         )}
 

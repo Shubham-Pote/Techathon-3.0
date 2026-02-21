@@ -19,8 +19,6 @@ export const getAllSchemesService = async (farmer: any) => {
     state: s.state,
     category: s.category,
     supported_crops: s.supportedCrops,
-
-    // ✅ FIXED — matches Prisma schema
     details: s.content?.details,
     benefits: s.content?.benefits,
     eligibility: s.content?.eligibility,

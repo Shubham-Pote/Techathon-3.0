@@ -1,7 +1,7 @@
 import { useState } from "react"
 import api from "../../utils/api"
 
-export default function OtpStep({ phone, onSuccess }) {
+export default function OtpStep({ phone, devOtp, onSuccess }) {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]) // 6 digits
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
@@ -52,6 +52,13 @@ export default function OtpStep({ phone, onSuccess }) {
     <div className="space-y-6 text-center">
       <div className="text-4xl">🔐</div>
       <p className="text-sm text-gray-500">Enter 6 digit code</p>
+
+      {/* Dev/demo: show the OTP since there's no SMS gateway */}
+      {devOtp && (
+        <div className="bg-amber-50 border border-amber-300 text-amber-800 rounded-xl px-4 py-2 text-sm font-semibold">
+          📋 Demo OTP: <span className="tracking-widest font-mono text-lg">{devOtp}</span>
+        </div>
+      )}
 
       <div className="flex justify-center gap-3 flex-wrap">
         {otp.map((digit, index) => (

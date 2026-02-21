@@ -1,44 +1,26 @@
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import LanguageToggle from "../Components/LanguageToggle";
 
 // Place farmer-bg.jpg in Client/public/ folder
 const farmerBg = "/farmer-bg.jpg";
 
-/* ─── Data ─── */
-const challenges = [
-  { icon: "description", title: "Complicated Documentation", desc: "Too many forms and confusing legal requirements." },
-  { icon: "hub", title: "Lack of Centralized Info", desc: "Information is spread across disconnected departments." },
-  { icon: "schedule", title: "Time-Consuming", desc: "Waiting for months to get even simple approvals." },
-  { icon: "signal_cellular_alt_1_bar", title: "Digital Barriers", desc: "Complex portals that are hard to navigate on mobile." },
-];
-
-const steps = [
-  { n: 1, title: "Enter Basic Details", desc: "Simply provide your state, land size, and crop type to get started." },
-  { n: 2, title: "Get Recommendations", desc: "Instantly view schemes tailored specifically to your farm profile." },
-  { n: 3, title: "Apply with Confidence", desc: "Complete one-click applications with pre-filled documents." },
-];
-
-const features = [
-  { icon: "data_usage", title: "Minimal Data Requirement", desc: "No need to remember hundreds of details. Just the basics to get you verified." },
-  { icon: "auto_awesome", title: "Smart Matching System", desc: "AI-driven engine that finds benefits you didn't even know you qualified for." },
-  { icon: "account_balance_wallet", title: "Integrated Support Finder", desc: "Find insurance and financial credit options alongside government subsidies." },
-  { icon: "map", title: "State-Specific Recommendations", desc: "Localized schemes that vary by region and agricultural climatic zones." },
-  { icon: "touch_app", title: "User-Friendly Interface", desc: "Simple, clean navigation built for farmers of all technological backgrounds." },
-  { icon: "phonelink_setup", title: "Low Digital Barriers", desc: "Optimized for low-bandwidth areas and works seamlessly on basic smartphones." },
-];
-
-const metrics = [
-  { value: "95%", label: "Streamlined Access", desc: "Success rate in identifying eligible schemes" },
-  { value: "-80%", label: "Reduced Time", desc: "Faster application processing versus manual" },
-  { value: "3X", label: "Improved Awareness", desc: "Increase in scheme utilization per farmer" },
-  { value: "$2B+", label: "Financial Inclusion", desc: "Total benefits facilitated through our portal" },
-];
-
-const platformLinks = ["Available Schemes", "Insurance Plans", "Eligibility Checker", "Financial Support"];
-const resourceLinks = ["Farming Tips", "Success Stories", "Help Center", "Policy Updates"];
+// Icon arrays (language-independent)
+const challengeIcons = ["description", "hub", "schedule", "signal_cellular_alt_1_bar"];
+const featureIcons  = ["data_usage", "auto_awesome", "account_balance_wallet", "map", "touch_app", "phonelink_setup"];
 
 /* ─── Component ─── */
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  // Merge icons with translated data
+  const challenges = (t('landing.challenges', { returnObjects: true }) || []).map((c, i) => ({ ...c, icon: challengeIcons[i] }));
+  const features   = (t('landing.features',   { returnObjects: true }) || []).map((f, i) => ({ ...f, icon: featureIcons[i] }));
+  const steps      = (t('landing.steps',      { returnObjects: true }) || []).map((s, i) => ({ ...s, n: i + 1 }));
+  const metrics    = t('landing.metrics',      { returnObjects: true }) || [];
+  const platformLinks = t('landing.platformLinks', { returnObjects: true }) || [];
+  const resourceLinks = t('landing.resourceLinks', { returnObjects: true }) || [];
 
   return (
     <div className="bg-background-light text-[#111811]" style={{ fontFamily: '"Public Sans", sans-serif' }}>
@@ -54,24 +36,25 @@ export default function LandingPage() {
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
-            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#schemes">Schemes</a>
-            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#insurance">Insurance</a>
-            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#how-it-works">How it Works</a>
-            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#impact">Impact</a>
+            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#schemes">{t('nav.schemes')}</a>
+            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#insurance">{t('nav.insurance')}</a>
+            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#how-it-works">{t('nav.howItWorks')}</a>
+            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#impact">{t('nav.impact')}</a>
           </nav>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 items-center">
+            <LanguageToggle />
             <button
               onClick={() => navigate("/home")}
               className="hidden sm:flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-sm hover:bg-opacity-90 transition-all"
             >
-              Check Eligibility
+              {t('nav.checkEligibility')}
             </button>
             <button
               onClick={() => navigate("/login")}
               className="flex min-w-[80px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-[#f0f4f0] text-[#111811] text-sm font-bold border border-[#dbe6db]"
             >
-              Login
+              {t('nav.login')}
             </button>
           </div>
         </div>
@@ -89,26 +72,26 @@ export default function LandingPage() {
             />
           </div>
           <div className="relative z-20 max-w-[960px] px-6 text-center text-white">
-            <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6">Krishiculture</h1>
+            <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6">{t('landing.heroTitle')}</h1>
             <p className="text-lg md:text-xl font-normal mb-10 max-w-3xl mx-auto opacity-90">
-              Simplifying access to government schemes, insurance, and financial support for farmers through minimal input and smart technology.
+              {t('landing.heroSubtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate("/home")}
                 className="min-w-[200px] h-14 bg-primary text-white rounded-xl font-bold text-lg shadow-lg hover:scale-105 transition-transform"
               >
-                Check Your Eligibility
+                {t('landing.checkYourEligibility')}
               </button>
               <button
                 onClick={() => navigate("/home")}
                 className="min-w-[200px] h-14 bg-white/20 backdrop-blur-sm text-white border-2 border-white rounded-xl font-bold text-lg hover:bg-white/30 transition-all"
               >
-                Explore Schemes
+                {t('landing.exploreSchemes')}
               </button>
             </div>
             <p className="mt-6 text-sm font-medium opacity-80 italic">
-              No complex forms. No confusion. Just the right support.
+              {t('landing.heroNote')}
             </p>
           </div>
         </section>
@@ -118,12 +101,12 @@ export default function LandingPage() {
           <div className="max-w-[1280px] mx-auto">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
-                <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">The Challenge</h2>
+                <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">{t('landing.challengeLabel')}</h2>
                 <h3 className="text-4xl font-black text-[#112211] mb-6 leading-tight">
-                  Why Farmers Struggle to Access Benefits
+                  {t('landing.challengeTitle')}
                 </h3>
                 <p className="text-lg text-[#618961] mb-8 leading-relaxed">
-                  Farmers often miss out on government schemes and insurance benefits due to complex procedures, scattered information, and lengthy paperwork.
+                  {t('landing.challengeDesc')}
                 </p>
               </div>
               <div className="grid sm:grid-cols-2 gap-6">
@@ -142,10 +125,10 @@ export default function LandingPage() {
         {/* ── Solution / How It Works ── */}
         <section id="how-it-works" className="py-20 px-6 lg:px-40 bg-primary/5">
           <div className="max-w-[1280px] mx-auto text-center mb-16">
-            <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">The Solution</h2>
-            <h3 className="text-4xl font-black text-[#112211] mb-6">Our Solution</h3>
+            <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">{t('landing.solutionLabel')}</h2>
+            <h3 className="text-4xl font-black text-[#112211] mb-6">{t('landing.solutionTitle')}</h3>
             <p className="text-lg text-[#416941] max-w-3xl mx-auto">
-              Our platform uses 2-3 smart filters to instantly match farmers with relevant state and central government schemes, insurance, and financial support.
+              {t('landing.solutionDesc')}
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-[1100px] mx-auto">
@@ -166,11 +149,11 @@ export default function LandingPage() {
           <div className="max-w-[1280px] mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
               <div className="max-w-xl">
-                <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">Key Features</h2>
-                <h3 className="text-4xl font-black text-[#112211]">Designed for Modern Agriculture</h3>
+                <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">{t('landing.featuresLabel')}</h2>
+                <h3 className="text-4xl font-black text-[#112211]">{t('landing.featuresTitle')}</h3>
               </div>
               <button className="text-primary font-bold flex items-center gap-2 hover:underline">
-                View All Features <span className="material-symbols-outlined">arrow_forward</span>
+                {t('landing.viewAllFeatures')} <span className="material-symbols-outlined">arrow_forward</span>
               </button>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -191,8 +174,8 @@ export default function LandingPage() {
         <section id="impact" className="py-20 px-6 lg:px-40 bg-[#112211] text-white">
           <div className="max-w-[1280px] mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">Our Impact</h2>
-              <h3 className="text-4xl font-black mb-6">Creating Measurable Impact</h3>
+              <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">{t('landing.impactLabel')}</h2>
+              <h3 className="text-4xl font-black mb-6">{t('landing.impactTitle')}</h3>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {metrics.map((m, i) => (
@@ -216,24 +199,24 @@ export default function LandingPage() {
             />
           </div>
           <div className="relative z-10 max-w-[800px] mx-auto text-center">
-            <h3 className="text-4xl md:text-5xl font-black text-[#112211] mb-8 leading-tight">Krishiculture</h3>
+            <h3 className="text-4xl md:text-5xl font-black text-[#112211] mb-8 leading-tight">{t('landing.ctaTitle')}</h3>
             <p className="text-xl text-[#416941] mb-12">
-              Join thousands of farmers who are already securing their financial future through AgriScheme Access.
+              {t('landing.ctaDesc')}
             </p>
             <button
               onClick={() => navigate("/home")}
               className="min-w-[280px] h-16 bg-primary text-white rounded-xl font-black text-xl shadow-xl hover:scale-105 transition-all"
             >
-              Get Started Now
+              {t('landing.ctaBtn')}
             </button>
             <div className="mt-8 flex items-center justify-center gap-6">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">verified</span>
-                <span className="text-sm font-semibold text-[#112211]">Verified Portal</span>
+                <span className="text-sm font-semibold text-[#112211]">{t('landing.ctaVerified')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary">security</span>
-                <span className="text-sm font-semibold text-[#112211]">Secure Data</span>
+                <span className="text-sm font-semibold text-[#112211]">{t('landing.ctaSecure')}</span>
               </div>
             </div>
           </div>
@@ -252,33 +235,33 @@ export default function LandingPage() {
               <h2 className="text-[#111811] text-lg font-bold tracking-tight">Krishiculture</h2>
             </div>
             <p className="text-sm text-[#618961] leading-relaxed">
-              Dedicated to bringing the benefits of governance to every farmer's doorstep.
+              {t('landing.footerDesc')}
             </p>
           </div>
 
           {/* Platform */}
           <div>
-            <h4 className="font-bold text-[#111811] mb-4">Platform</h4>
+            <h4 className="font-bold text-[#111811] mb-4">{t('landing.platform')}</h4>
             <ul className="space-y-2 text-sm text-[#618961]">
-              {platformLinks.map((l) => (
-                <li key={l}><a className="hover:text-primary transition-colors" href="#">{l}</a></li>
+              {platformLinks.map((lk) => (
+                <li key={lk}><a className="hover:text-primary transition-colors" href="#">{lk}</a></li>
               ))}
             </ul>
           </div>
 
           {/* Resources */}
           <div>
-            <h4 className="font-bold text-[#111811] mb-4">Resources</h4>
+            <h4 className="font-bold text-[#111811] mb-4">{t('landing.resources')}</h4>
             <ul className="space-y-2 text-sm text-[#618961]">
-              {resourceLinks.map((l) => (
-                <li key={l}><a className="hover:text-primary transition-colors" href="#">{l}</a></li>
+              {resourceLinks.map((lk) => (
+                <li key={lk}><a className="hover:text-primary transition-colors" href="#">{lk}</a></li>
               ))}
             </ul>
           </div>
 
           {/* Connect */}
           <div>
-            <h4 className="font-bold text-[#111811] mb-4">Connect</h4>
+            <h4 className="font-bold text-[#111811] mb-4">{t('landing.connect')}</h4>
             <div className="flex gap-4">
               {["public", "mail", "call"].map((icon) => (
                 <a key={icon} className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors" href="#">
@@ -290,11 +273,11 @@ export default function LandingPage() {
         </div>
 
         <div className="max-w-[1280px] mx-auto mt-12 pt-8 border-t border-[#dbe6db] flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-[#618961]">© 2024 AgriScheme Access Platform. All rights reserved.</p>
+          <p className="text-xs text-[#618961]">{t('landing.copyright')}</p>
           <div className="flex gap-6 text-xs text-[#618961]">
-            <a className="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-            <a className="hover:text-primary transition-colors" href="#">Terms of Service</a>
-            <a className="hover:text-primary transition-colors" href="#">Accessibility</a>
+            <a className="hover:text-primary transition-colors" href="#">{t('landing.privacyPolicy')}</a>
+            <a className="hover:text-primary transition-colors" href="#">{t('landing.termsOfService')}</a>
+            <a className="hover:text-primary transition-colors" href="#">{t('landing.accessibility')}</a>
           </div>
         </div>
       </footer>

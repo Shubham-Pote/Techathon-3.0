@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import hero1 from "../assets/features/hero.jpeg"
 import hero2 from "../assets/features/hero1.jpeg"
@@ -7,6 +8,7 @@ import hero4 from "../assets/features/hero1.jpeg"
 import hero5 from "../assets/features/hero7.webp"
 
 export default function HeroHeader({ search, setSearch }) {
+  const { t } = useTranslation()
 
   const images = [hero1, hero2, hero3, hero4, hero5]
   const [current, setCurrent] = useState(0)
@@ -38,18 +40,14 @@ export default function HeroHeader({ search, setSearch }) {
 
       <div className="relative z-10 max-w-3xl mx-auto h-full flex flex-col items-center justify-center px-6 text-center">
 
-        <p className="text-emerald-300 text-sm font-medium tracking-wide uppercase mb-2">
-          Krishiculture
-        </p>
-
         <h2 className="text-3xl md:text-4xl font-bold leading-tight mb-2">
-          Find the Right Scheme
+          {t('hero.title1')}
           <br />
-          <span className="text-emerald-400">for Your Farm</span>
+          <span className="text-emerald-400">{t('hero.title2')}</span>
         </h2>
 
         <p className="text-white/70 text-sm mb-6 max-w-md">
-          Search across government agricultural schemes, subsidies, and insurance programs
+          {t('hero.subtitle')}
         </p>
 
         <div className="w-full max-w-xl">
@@ -61,13 +59,13 @@ export default function HeroHeader({ search, setSearch }) {
             </div>
             <input
               type="text"
-              placeholder="Enter scheme name to search..."
+              placeholder={t('hero.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="flex-1 px-4 py-3.5 text-slate-800 text-sm outline-none bg-transparent placeholder-slate-400"
             />
             <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 text-sm font-semibold transition">
-              Search
+              {t('hero.searchBtn')}
             </button>
           </div>
         </div>
