@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { getNearbyHelpCenters, getDirections } from "../services/helpCenterService"
 import { translateText } from "../utils/translate"
 
-export default function HelpCenterButton() {
+export default function HelpCenterButton({ transparent = false }) {
   const { i18n } = useTranslation()
   const lang = i18n.language
 
@@ -75,9 +75,9 @@ export default function HelpCenterButton() {
   }
 
   const tabs = [
-    { id: "agriculture", label: translated.agriculture || "Agriculture", icon: "🌾", data: data?.agricultureOffices },
-    { id: "bank", label: translated.bank || "Banks", icon: "🏦", data: data?.banks },
-    { id: "service", label: translated.serviceCenter || "CSC", icon: "🏛️", data: data?.serviceCenters },
+    { id: "agriculture", label: translated.agriculture || "Agriculture", icon: "AG", data: data?.agricultureOffices },
+    { id: "bank", label: translated.bank || "Banks", icon: "BK", data: data?.banks },
+    { id: "service", label: translated.serviceCenter || "CSC", icon: "SC", data: data?.serviceCenters },
   ]
 
   const currentTab = tabs.find((t) => t.id === activeTab)
@@ -88,14 +88,20 @@ export default function HelpCenterButton() {
       {/* Help Center Button */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="
-          flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm
-          bg-white/10 border border-white/20
-          hover:bg-white/20 transition-all font-medium
-        "
+        className={`
+          flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm
+          border transition-all font-medium
+          ${transparent
+            ? "border-white/30 text-white/90 hover:bg-white/10"
+            : "border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+          }
+        `}
         title="Find nearby help centers"
       >
-        <span className="text-base">📍</span>
+        <svg className={`w-4 h-4 ${transparent ? "text-white/90" : "text-green-600"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
         <span className="hidden sm:inline">Help</span>
       </button>
 
@@ -105,7 +111,11 @@ export default function HelpCenterButton() {
           {/* Header */}
           <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-4 py-3 border-b border-slate-100">
             <h3 className="font-semibold text-slate-800 text-sm flex items-center gap-2">
-              <span>📍</span> {translated.title || "Nearby Help Centers"}
+              <svg className="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {translated.title || "Nearby Help Centers"}
             </h3>
           </div>
 
@@ -121,7 +131,7 @@ export default function HelpCenterButton() {
                     : "text-slate-500 hover:bg-slate-50"
                 }`}
               >
-                <span className="mr-1">{tab.icon}</span>
+                <span className="mr-1 text-[10px] font-bold bg-gray-100 rounded px-1 py-0.5">{tab.icon}</span>
                 <span className="hidden sm:inline">{tab.label}</span>
               </button>
             ))}
@@ -144,7 +154,7 @@ export default function HelpCenterButton() {
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-slate-800 text-sm truncate">
-                          {place.icon} {place.name}
+                          {place.name}
                         </h4>
                         {place.address && (
                           <p className="text-xs text-slate-500 truncate mt-0.5">{place.address}</p>
@@ -165,7 +175,7 @@ export default function HelpCenterButton() {
                         href={`tel:${place.phone}`}
                         className="inline-flex items-center gap-1 mt-2 text-xs text-blue-600 hover:underline"
                       >
-                        📞 {place.phone}
+                        {place.phone}
                       </a>
                     )}
                   </div>

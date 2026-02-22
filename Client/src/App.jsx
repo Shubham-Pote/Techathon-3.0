@@ -7,12 +7,14 @@ import { AuthProvider } from "./context/AuthContext"
 import { LanguageProvider } from "./context/LanguageContext"
 import SchemeDetails from "./pages/SchemeDetails"
 import SpeakOnSelect from "./Components/SpeakOnSelect"
+import Chatbot from "./Components/chatbot"
 export default function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
         <BrowserRouter>
           <SpeakOnSelect />
+          <Chatbot />
 
           <Routes>
             {/* Landing Page */}

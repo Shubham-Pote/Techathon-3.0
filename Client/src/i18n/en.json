@@ -139,5 +139,26 @@
     ],
     "platformLinks": ["Available Schemes", "Insurance Plans", "Eligibility Checker", "Financial Support"],
     "resourceLinks": ["Farming Tips", "Success Stories", "Help Center", "Policy Updates"]
+  },
+  "chatbot": {
+    "title": "Krishi Mitra 🌾",
+    "greeting": "👋 Hello Farmer! Ask me about schemes, insurance, or farming tips.",
+    "placeholder": "Ask your question...",
+    "sending": "Thinking...",
+    "error": "Sorry, something went wrong. Please try again.",
+    "voiceNotSupported": "Voice input is not supported in this browser.",
+    "suggestedQuestions": "Suggested Questions",
+    "faq1": "How do I check my eligibility?",
+    "faq2": "What is PM-KISAN?",
+    "faq3": "What documents do I need?",
+    "faq4": "How do I apply for a scheme?",
+    "faq5": "What is crop insurance?",
+    "faq6": "Is this service free?",
+    "faq7": "What is Soil Health Card?",
+    "faq8": "What is Kisan Credit Card?",
+    "faq9": "Which state schemes are available?",
+    "faq10": "What is NABARD scheme?",
+    "faq11": "How much land do I need to be eligible?",
+    "faq12": "How do I track my application status?"
   }
 }

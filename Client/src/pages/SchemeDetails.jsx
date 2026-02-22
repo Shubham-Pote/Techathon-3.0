@@ -123,7 +123,7 @@ export default function SchemeDetails() {
     return (
       <>
         <Navbar />
-        <div className="pt-20 min-h-screen bg-white flex items-center justify-center">
+        <div className="min-h-screen bg-white flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
             <p className="text-slate-400 text-sm">{t('schemeDetail.loading')}</p>
@@ -143,10 +143,10 @@ export default function SchemeDetails() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-50 flex pt-20">
+      <div className="min-h-screen bg-gray-50 flex">
         {/* ===== SIDEBAR ===== */}
         <aside className="hidden lg:block w-72 shrink-0">
-          <nav className="sticky top-24 py-12 pl-8 pr-6">
+          <nav className="sticky top-20 py-12 pl-8 pr-6">
             <div className="mb-6">
               <p className="text-sm font-bold uppercase tracking-wider text-gray-400">
                 {t('schemeDetail.schemeSection')}
