@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [step, setStep] = useState(1)
   const [phone, setPhone] = useState("")
   const [tempToken, setTempToken] = useState(null)
+  const [devOtp, setDevOtp] = useState(null)
 
   const steps = ["Phone", "OTP", "Details"]
 
@@ -110,7 +111,7 @@ export default function LoginPage() {
                   <PhoneStep
                     phone={phone}
                     setPhone={setPhone}
-                    next={() => setStep(2)}
+                    next={(otp) => { setDevOtp(otp); setStep(2) }}
                   />
                 )}
 
@@ -118,6 +119,7 @@ export default function LoginPage() {
                 {step === 2 && (
                   <OtpStep
                     phone={phone}
+                    devOtp={devOtp}
                     onSuccess={handleOtpSuccess}
                   />
                 )}

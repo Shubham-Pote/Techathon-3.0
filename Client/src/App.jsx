@@ -6,12 +6,15 @@ import LandingPage from "./pages/LandingPage"
 import { AuthProvider } from "./context/AuthContext"
 import { LanguageProvider } from "./context/LanguageContext"
 import SchemeDetails from "./pages/SchemeDetails"
+import SpeakOnSelect from "./Components/SpeakOnSelect"
 export default function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
+<<<<<<< Updated upstream
 
         <BrowserRouter>
+          <SpeakOnSelect />
 
           <Routes>
 
@@ -29,6 +32,10 @@ export default function App() {
 
         </BrowserRouter>
 
+=======
+        
+        <Home />
+>>>>>>> Stashed changes
       </AuthProvider>
     </LanguageProvider>
   )

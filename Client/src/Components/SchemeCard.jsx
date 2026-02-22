@@ -1,7 +1,9 @@
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { useLang } from "../context/LanguageContext"
+import { useTranslation } from "react-i18next"
 import { useAuth } from "../context/AuthContext"
 import { isEligible } from "../utils/eligibility"
+import { translateText, translateArray } from "../utils/translate"
 
 const categoryColors = {
   SUBSIDY: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
@@ -10,7 +12,8 @@ const categoryColors = {
 }
 
 export default function SchemeCard({ scheme }) {
-  const { t } = useLang()
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language
   const navigate = useNavigate()
   const { user } = useAuth()
 
@@ -25,9 +28,50 @@ export default function SchemeCard({ scheme }) {
   }
 
   const cat = categoryColors[scheme?.category] || categoryColors.SUBSIDY
-  const crops = scheme?.supported_crops || []
-  const financialSummary = scheme?.details?.financial_assistance_summary || ""
+  const rawCrops = scheme?.supported_crops || []
+  const rawFinancialSummary = scheme?.details?.financial_assistance_summary || ""
+  const rawName = scheme?.scheme_name || ""
+  const rawDesc = scheme?.details?.description || ""
+  const rawState = scheme?.state || ""
   const mode = scheme?.application_process?.mode || ""
+
+  // --- Translated state ---
+  const [trName, setTrName] = useState(rawName)
+  const [trDesc, setTrDesc] = useState(rawDesc)
+  const [trFinancial, setTrFinancial] = useState(rawFinancialSummary)
+  const [trState, setTrState] = useState(rawState)
+  const [trCrops, setTrCrops] = useState(rawCrops)
+
+  useEffect(() => {
+    let cancelled = false
+
+    if (lang === "en") {
+      setTrName(rawName)
+      setTrDesc(rawDesc)
+      setTrFinancial(rawFinancialSummary)
+      setTrState(rawState)
+      setTrCrops(rawCrops)
+      return
+    }
+
+    // Kick off all translations in parallel
+    Promise.all([
+      translateText(rawName, lang),
+      translateText(rawDesc, lang),
+      translateText(rawFinancialSummary, lang),
+      translateText(rawState, lang),
+      translateArray(rawCrops, lang),
+    ]).then(([name, desc, fin, state, crops]) => {
+      if (cancelled) return
+      setTrName(name)
+      setTrDesc(desc)
+      setTrFinancial(fin)
+      setTrState(state)
+      setTrCrops(crops)
+    })
+
+    return () => { cancelled = true }
+  }, [lang, rawName, rawDesc, rawFinancialSummary, rawState, rawCrops])
 
   return (
     <div
@@ -35,26 +79,26 @@ export default function SchemeCard({ scheme }) {
       className="
         relative cursor-pointer bg-white rounded-2xl
         border border-slate-200
-        shadow-sm hover:shadow-lg hover:border-slate-300
+        shadow-sm hover:shadow-md hover:border-slate-300
         transition-all duration-200
         overflow-hidden group
       "
     >
-      {/* Top accent bar */}
-      <div className={`h-1 w-full ${scheme?.category === "INSURANCE" ? "bg-blue-500" : scheme?.category === "WELFARE" ? "bg-amber-500" : "bg-emerald-500"}`} />
+      {/* Mobile: top color bar, Desktop: left strip */}
+      <div className={`h-1 sm:hidden w-full ${scheme?.category === "INSURANCE" ? "bg-blue-500" : scheme?.category === "WELFARE" ? "bg-amber-500" : "bg-emerald-500"}`} />
+      
+      <div className="p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:gap-5">
 
-      <div className="p-5 flex gap-5">
-
-        {/* LEFT: Category indicator */}
-        <div className={`w-1.5 self-stretch rounded-full shrink-0 ${scheme?.category === "INSURANCE" ? "bg-blue-500" : scheme?.category === "WELFARE" ? "bg-amber-500" : "bg-emerald-500"}`} />
+        {/* LEFT: Category indicator - hidden on mobile, shown on desktop */}
+        <div className={`hidden sm:block w-1.5 self-stretch rounded-full shrink-0 ${scheme?.category === "INSURANCE" ? "bg-blue-500" : scheme?.category === "WELFARE" ? "bg-amber-500" : "bg-emerald-500"}`} />
 
         {/* MIDDLE: Content */}
         <div className="flex-1 min-w-0">
 
           {/* Title row */}
           <div className="flex items-start justify-between gap-3 mb-1">
-            <h3 className="text-base font-semibold text-slate-800 leading-snug group-hover:text-emerald-700 transition-colors line-clamp-2">
-              {scheme?.scheme_name || "Unnamed Scheme"}
+            <h3 className="text-[15px] font-semibold text-slate-800 leading-snug group-hover:text-emerald-700 transition-colors line-clamp-2">
+              {trName || "Unnamed Scheme"}
             </h3>
 
             {/* Eligibility badge */}
@@ -63,21 +107,21 @@ export default function SchemeCard({ scheme }) {
                 className={`
                   shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap
                   ${eligible
-                    ? "bg-emerald-100 text-emerald-700 ring-1 ring-emerald-200"
-                    : "bg-slate-100 text-slate-500 ring-1 ring-slate-200"
+                    ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
+                    : "bg-slate-50 text-slate-500 ring-1 ring-slate-200"
                   }
                 `}
               >
-                {eligible ? "✓ Eligible" : "Not Eligible"}
+                {eligible ? t('card.eligible') : t('card.notEligible')}
               </span>
             )}
           </div>
 
           {/* State + Category */}
           <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
-            <span>{scheme?.state || "All India"}</span>
+            <span>{trState || t('card.allIndia')}</span>
             <span className="text-slate-300">•</span>
-            <span className={`px-2 py-0.5 text-xs font-medium rounded-md ${cat.bg} ${cat.text}`}>
+            <span className={`px-2 py-0.5 text-[11px] font-semibold rounded-md border ${cat.bg} ${cat.text} ${cat.border}`}>
               {scheme?.category}
             </span>
             {mode && (
@@ -89,43 +133,45 @@ export default function SchemeCard({ scheme }) {
           </div>
 
           {/* Description */}
-          <p className="text-sm text-slate-600 line-clamp-2 mb-3 leading-relaxed">
-            {scheme?.details?.description || "No description available"}
+          <p className="text-[13px] text-slate-600 line-clamp-2 mb-3 leading-relaxed">
+            {trDesc || t('card.noDescription')}
           </p>
 
           {/* Financial summary highlight */}
-          {financialSummary && (
+          {rawFinancialSummary && (
             <div className="bg-slate-50 border border-slate-100 rounded-lg px-3 py-2 mb-3">
-              <p className="text-xs text-slate-500 font-medium mb-0.5">Financial Assistance</p>
+              <p className="text-[11px] text-slate-500 font-semibold mb-0.5 uppercase tracking-wide">
+                {t('card.financialAssistance')}
+              </p>
               <p className="text-sm text-slate-700 font-medium line-clamp-1">
-                {financialSummary}
+                {trFinancial}
               </p>
             </div>
           )}
 
           {/* Tags row */}
           <div className="flex flex-wrap items-center gap-1.5">
-            {crops.slice(0, 4).map((crop, i) => (
+            {trCrops.slice(0, 4).map((crop, i) => (
               <span
                 key={i}
-                className="px-2 py-0.5 text-[11px] font-medium bg-green-50 text-green-700 rounded-md border border-green-100 uppercase tracking-wide"
+                className="px-2 py-0.5 text-[11px] font-medium bg-slate-100 text-slate-600 rounded-md border border-slate-200"
               >
                 {crop}
               </span>
             ))}
-            {crops.length > 4 && (
+            {trCrops.length > 4 && (
               <span className="text-[11px] text-slate-400 font-medium">
-                +{crops.length - 4} more
+                {t('card.more', { n: trCrops.length - 4 })}
               </span>
             )}
           </div>
         </div>
 
-        {/* RIGHT: Apply button */}
-        <div className="flex flex-col items-end justify-between shrink-0">
+        {/* RIGHT on desktop / BOTTOM on mobile: Apply button */}
+        <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-between shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
           {scheme?.min_land_acres && (
-            <span className="text-[11px] text-slate-400 font-medium whitespace-nowrap mb-2">
-              Min {scheme.min_land_acres} acre
+            <span className="text-[11px] text-slate-400 font-medium whitespace-nowrap sm:mb-2">
+              {t('card.minAcre', { n: scheme.min_land_acres })}
             </span>
           )}
 
@@ -135,15 +181,15 @@ export default function SchemeCard({ scheme }) {
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             className="
-              px-5 py-2.5 rounded-xl
+              px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl
               bg-emerald-600 text-white
-              text-sm font-semibold
+              text-xs sm:text-sm font-semibold
               hover:bg-emerald-700 active:scale-95
               transition-all whitespace-nowrap
-              shadow-sm hover:shadow-md
+              shadow-sm hover:shadow
             "
           >
-            Apply Now
+            {t('card.applyNow')}
           </a>
         </div>
       </div>

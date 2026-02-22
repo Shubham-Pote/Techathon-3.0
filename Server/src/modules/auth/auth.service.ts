@@ -23,7 +23,7 @@ export async function requestOtp(mobile: string) {
   // Mock SMS
   console.log(`🔐 OTP for ${mobile} is: ${otp}`);
 
-  return { success: true };
+  return { success: true, otp };
 }
 
 // 2. Verify OTP

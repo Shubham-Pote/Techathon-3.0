@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#059669"/>
+  <circle cx="256" cy="240" r="120" fill="none" stroke="white" stroke-width="8" opacity="0.7"/>
+  <path d="M196 320c48 0 92-32 104-96-64 0-104 40-104 96Z" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M196 320c0 24 8 40 24 56" fill="none" stroke="white" stroke-width="8" stroke-linecap="round"/>
+  <text x="256" y="440" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-size="42" font-weight="bold">Krishiculture</text>
+</svg>

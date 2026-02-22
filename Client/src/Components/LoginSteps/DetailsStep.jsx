@@ -1,4 +1,5 @@
 import { useState } from "react"
+import api from "../../utils/api"
 
 const cropsEnum = [
   "COTTON",
@@ -25,6 +26,8 @@ export default function DetailsStep({ onFinish }) {
     landSizeAcres: "",
     crops: [],
   })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -43,12 +46,27 @@ export default function DetailsStep({ onFinish }) {
     }))
   }
 
-  const handleSubmit = () => {
-    onFinish({
-      state: form.state || null,
-      landSizeAcres: form.landSizeAcres ? Number(form.landSizeAcres) : null,
-      crops: form.crops,
-    })
+  const handleSubmit = async () => {
+    try {
+      setLoading(true)
+      setError("")
+
+      const payload = {
+        state: form.state || null,
+        landSizeAcres: form.landSizeAcres ? Number(form.landSizeAcres) : null,
+        crops: form.crops,
+      }
+
+      // Persist profile to server (token auto-attached by api interceptor)
+      const res = await api.put("/farmers/me", payload)
+
+      // Pass back the saved farmer record from the server
+      onFinish(res.data.farmer ?? payload)
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to save profile. Please try again.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -121,12 +139,15 @@ export default function DetailsStep({ onFinish }) {
         </div>
       </div>
 
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+
       {/* Submit */}
       <button
         onClick={handleSubmit}
-        className="w-full bg-gradient-to-r from-emerald-700 to-green-700 text-white py-4 rounded-xl font-bold text-base hover:from-emerald-800 hover:to-green-800 shadow-lg hover:shadow-xl transition-all"
+        disabled={loading}
+        className="w-full bg-gradient-to-r from-emerald-700 to-green-700 text-white py-4 rounded-xl font-bold text-base hover:from-emerald-800 hover:to-green-800 shadow-lg hover:shadow-xl transition-all disabled:opacity-60"
       >
-        Save & Continue
+        {loading ? "Saving..." : "Save & Continue"}
       </button>
     </div>
   )

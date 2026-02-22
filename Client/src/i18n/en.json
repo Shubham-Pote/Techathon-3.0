@@ -1,0 +1,143 @@
+{
+  "nav": {
+    "login": "Login",
+    "logout": "Logout",
+    "schemes": "Schemes",
+    "insurance": "Insurance",
+    "howItWorks": "How it Works",
+    "impact": "Impact",
+    "checkEligibility": "Check Eligibility"
+  },
+  "hero": {
+    "title1": "Find the Right Scheme",
+    "title2": "for Your Farm",
+    "subtitle": "Search across government agricultural schemes, subsidies, and insurance programs",
+    "searchPlaceholder": "Enter scheme name to search...",
+    "searchBtn": "Search"
+  },
+  "schemes": {
+    "heading": "Available Schemes",
+    "showing": "Showing {{n}} of {{total}} schemes",
+    "filters": "Filters",
+    "filtersDesc": "Narrow down schemes by location, type, or crop.",
+    "active": "active",
+    "state": "State",
+    "supportType": "Support Type",
+    "crop": "Crop",
+    "eligibility": "Eligibility",
+    "allSchemes": "All Schemes",
+    "eligibleOnly": "Eligible Only",
+    "notEligible": "Not Eligible",
+    "clearFilters": "Clear All Filters",
+    "sortDefault": "Sort: Default",
+    "sortAZ": "Sort: A \u2192 Z",
+    "sortZA": "Sort: Z \u2192 A",
+    "loading": "Loading schemes...",
+    "noResults": "No schemes found",
+    "noResultsHint": "Try adjusting your filters or search",
+    "prev": "\u2190 Previous",
+    "next": "Next \u2192"
+  },
+  "card": {
+    "eligible": "\u2713 Eligible",
+    "notEligible": "Not Eligible",
+    "financialAssistance": "Financial Assistance",
+    "more": "+{{n}} more",
+    "minAcre": "Min {{n}} acre",
+    "applyNow": "Apply Now",
+    "allIndia": "All India",
+    "noDescription": "No description available"
+  },
+  "schemeDetail": {
+    "loading": "Loading...",
+    "schemeSection": "Scheme Section",
+    "back": "\u2190 Back to Schemes",
+    "financialAssistance": "Financial Assistance",
+    "applyNow": "Apply Now \u2192",
+    "minAcre": "Min {{n}} Acre",
+    "sidebar": {
+      "details": "Details",
+      "benefits": "Benefits",
+      "eligibility": "Eligibility",
+      "process": "Application Process",
+      "docs": "Documents Required"
+    },
+    "content": {
+      "detailsHeading": "Details",
+      "noDescription": "No description available.",
+      "benefitsHeading": "Benefits",
+      "noBenefits": "No benefits listed.",
+      "maxLimit": "Max Limit:",
+      "agency": "Agency:",
+      "disbursingAuthority": "Disbursing Authority:",
+      "eligibilityHeading": "Eligibility",
+      "noEligibility": "No eligibility conditions available.",
+      "processHeading": "Application Process",
+      "mode": "Mode:",
+      "portal": "Portal:",
+      "visitPortal": "Visit Portal \u2192",
+      "checkStatus": "Check Status \u2192",
+      "note": "Note:",
+      "docsHeading": "Documents Required",
+      "noDocs": "No documents listed."
+    }
+  },
+  "landing": {
+    "heroTitle": "Krishiculture",
+    "heroSubtitle": "Simplifying access to government schemes, insurance, and financial support for farmers through minimal input and smart technology.",
+    "checkYourEligibility": "Check Your Eligibility",
+    "exploreSchemes": "Explore Schemes",
+    "heroNote": "No complex forms. No confusion. Just the right support.",
+    "challengeLabel": "The Challenge",
+    "challengeTitle": "Why Farmers Struggle to Access Benefits",
+    "challengeDesc": "Farmers often miss out on government schemes and insurance benefits due to complex procedures, scattered information, and lengthy paperwork.",
+    "solutionLabel": "The Solution",
+    "solutionTitle": "Our Solution",
+    "solutionDesc": "Our platform uses 2-3 smart filters to instantly match farmers with relevant state and central government schemes, insurance, and financial support.",
+    "featuresLabel": "Key Features",
+    "featuresTitle": "Designed for Modern Agriculture",
+    "viewAllFeatures": "View All Features",
+    "impactLabel": "Our Impact",
+    "impactTitle": "Creating Measurable Impact",
+    "ctaTitle": "Krishiculture",
+    "ctaDesc": "Join thousands of farmers who are already securing their financial future through AgriScheme Access.",
+    "ctaBtn": "Get Started Now",
+    "ctaVerified": "Verified Portal",
+    "ctaSecure": "Secure Data",
+    "footerDesc": "Dedicated to bringing the benefits of governance to every farmer\u2019s doorstep.",
+    "platform": "Platform",
+    "resources": "Resources",
+    "connect": "Connect",
+    "copyright": "\u00a9 2024 AgriScheme Access Platform. All rights reserved.",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "accessibility": "Accessibility",
+    "challenges": [
+      { "title": "Complicated Documentation", "desc": "Too many forms and confusing legal requirements." },
+      { "title": "Lack of Centralized Info", "desc": "Information is spread across disconnected departments." },
+      { "title": "Time-Consuming", "desc": "Waiting for months to get even simple approvals." },
+      { "title": "Digital Barriers", "desc": "Complex portals that are hard to navigate on mobile." }
+    ],
+    "steps": [
+      { "title": "Enter Basic Details", "desc": "Simply provide your state, land size, and crop type to get started." },
+      { "title": "Get Recommendations", "desc": "Instantly view schemes tailored specifically to your farm profile." },
+      { "title": "Apply with Confidence", "desc": "Complete one-click applications with pre-filled documents." }
+    ],
+    "features": [
+      { "title": "Minimal Data Requirement", "desc": "No need to remember hundreds of details. Just the basics to get you verified." },
+      { "title": "Smart Matching System", "desc": "AI-driven engine that finds benefits you didn't even know you qualified for." },
+      { "title": "Integrated Support Finder", "desc": "Find insurance and financial credit options alongside government subsidies." },
+      { "title": "State-Specific Recommendations", "desc": "Localized schemes that vary by region and agricultural climatic zones." },
+      { "title": "User-Friendly Interface", "desc": "Simple, clean navigation built for farmers of all technological backgrounds." },
+      { "title": "Low Digital Barriers", "desc": "Optimized for low-bandwidth areas and works seamlessly on basic smartphones." }
+    ],
+    "metrics": [
+      { "value": "95%", "label": "Streamlined Access", "desc": "Success rate in identifying eligible schemes" },
+      { "value": "-80%", "label": "Reduced Time", "desc": "Faster application processing versus manual" },
+      { "value": "3X", "label": "Improved Awareness", "desc": "Increase in scheme utilization per farmer" },
+      { "value": "$2B+", "label": "Financial Inclusion", "desc": "Total benefits facilitated through our portal" }
+    ],
+    "platformLinks": ["Available Schemes", "Insurance Plans", "Eligibility Checker", "Financial Support"],
+    "resourceLinks": ["Farming Tips", "Success Stories", "Help Center", "Policy Updates"]
+  }
+}

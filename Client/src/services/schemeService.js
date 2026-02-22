@@ -1,4 +1,5 @@
-const API_URL = "http://localhost:3000/schemes";
+const API_BASE = `http://${window.location.hostname}:3000`;
+const API_URL = `${API_BASE}/schemes`;
 
 // Get all schemes
 export async function getAllSchemes() {
