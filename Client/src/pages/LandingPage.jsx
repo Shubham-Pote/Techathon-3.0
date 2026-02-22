@@ -1,40 +1,20 @@
 import { useNavigate } from "react-router-dom";
 
-// Place farmer-bg.jpg in Client/public/ folder
-const farmerBg = "/farmer-bg.jpg";
+const farmerBg = "/farmer-bg.png";
 
 /* ─── Data ─── */
-const challenges = [
-  { icon: "description", title: "Complicated Documentation", desc: "Too many forms and confusing legal requirements." },
-  { icon: "hub", title: "Lack of Centralized Info", desc: "Information is spread across disconnected departments." },
-  { icon: "schedule", title: "Time-Consuming", desc: "Waiting for months to get even simple approvals." },
-  { icon: "signal_cellular_alt_1_bar", title: "Digital Barriers", desc: "Complex portals that are hard to navigate on mobile." },
-];
-
-const steps = [
-  { n: 1, title: "Enter Basic Details", desc: "Simply provide your state, land size, and crop type to get started." },
-  { n: 2, title: "Get Recommendations", desc: "Instantly view schemes tailored specifically to your farm profile." },
-  { n: 3, title: "Apply with Confidence", desc: "Complete one-click applications with pre-filled documents." },
-];
-
-const features = [
-  { icon: "data_usage", title: "Minimal Data Requirement", desc: "No need to remember hundreds of details. Just the basics to get you verified." },
-  { icon: "auto_awesome", title: "Smart Matching System", desc: "AI-driven engine that finds benefits you didn't even know you qualified for." },
-  { icon: "account_balance_wallet", title: "Integrated Support Finder", desc: "Find insurance and financial credit options alongside government subsidies." },
-  { icon: "map", title: "State-Specific Recommendations", desc: "Localized schemes that vary by region and agricultural climatic zones." },
-  { icon: "touch_app", title: "User-Friendly Interface", desc: "Simple, clean navigation built for farmers of all technological backgrounds." },
-  { icon: "phonelink_setup", title: "Low Digital Barriers", desc: "Optimized for low-bandwidth areas and works seamlessly on basic smartphones." },
+const problems = [
+  { title: "Confusing Eligibility Rules", desc: "Dozens of schemes exist but understanding who qualifies is overwhelming for the average farmer." },
+  { title: "Multiple Websites", desc: "Farmers have to visit 5–10 different government portals just to find relevant information." },
+  { title: "Lack of Awareness", desc: "Over 60% of eligible farmers never claim benefits simply because they don't know they exist." },
 ];
 
 const metrics = [
   { value: "95%", label: "Streamlined Access", desc: "Success rate in identifying eligible schemes" },
   { value: "-80%", label: "Reduced Time", desc: "Faster application processing versus manual" },
   { value: "3X", label: "Improved Awareness", desc: "Increase in scheme utilization per farmer" },
-  { value: "$2B+", label: "Financial Inclusion", desc: "Total benefits facilitated through our portal" },
+  { value: "₹2B+", label: "Financial Inclusion", desc: "Total benefits facilitated through our portal" },
 ];
-
-const platformLinks = ["Available Schemes", "Insurance Plans", "Eligibility Checker", "Financial Support"];
-const resourceLinks = ["Farming Tips", "Success Stories", "Help Center", "Policy Updates"];
 
 /* ─── Component ─── */
 export default function LandingPage() {
@@ -43,147 +23,182 @@ export default function LandingPage() {
   return (
     <div className="bg-background-light text-[#111811]" style={{ fontFamily: '"Public Sans", sans-serif' }}>
 
-      {/* ── Navigation ── */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#dbe6db] px-6 lg:px-40 py-3">
-        <div className="max-w-[1280px] mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="text-primary">
-              <span className="material-symbols-outlined text-3xl">agriculture</span>
+      {/* ── Header Bar ── */}
+      <div className="text-white px-6 lg:px-10 py-4" style={{ background: '#1E0F05' }}>
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="bg-white rounded-full w-16 h-16 flex items-center justify-center">
+              <span className="material-symbols-outlined text-4xl" style={{ color: '#1E0F05' }}>agriculture</span>
             </div>
-            <h2 className="text-[#111811] text-xl font-bold tracking-tight">Krishiculture</h2>
+            <div>
+              <h1 className="text-2xl font-bold tracking-wide">Krishiculture</h1>
+              <p className="text-sm text-white/80">Government of India</p>
+            </div>
           </div>
-
-          <nav className="hidden md:flex items-center gap-8">
-            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#schemes">Schemes</a>
-            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#insurance">Insurance</a>
-            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#how-it-works">How it Works</a>
-            <a className="text-[#111811] text-sm font-semibold hover:text-primary transition-colors" href="#impact">Impact</a>
-          </nav>
-
-          <div className="flex gap-3">
-            <button
-              onClick={() => navigate("/home")}
-              className="hidden sm:flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold shadow-sm hover:bg-opacity-90 transition-all"
-            >
-              Check Eligibility
+          <div className="flex gap-3 items-center">
+            <button className="px-4 py-2 border-2 border-white rounded-md text-sm font-semibold hover:bg-white/10 transition-colors">
+              ENG
             </button>
-            <button
-              onClick={() => navigate("/login")}
-              className="flex min-w-[80px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-[#f0f4f0] text-[#111811] text-sm font-bold border border-[#dbe6db]"
-            >
-              Login
+            <button className="px-4 py-2 border border-white/50 rounded-md text-sm hover:bg-white/10 transition-colors">
+              हिंदी
             </button>
           </div>
         </div>
-      </header>
+      </div>
+
+      {/* ── Golden accent line ── */}
+      <div className="h-[5px]" style={{ background: 'linear-gradient(90deg, #B8952F, #D4A843, #C8A84E, #D4A843, #B8952F)' }}></div>
 
       <main>
         {/* ── Hero ── */}
-        <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
+        <section className="relative min-h-[600px] flex items-center overflow-hidden">
           <div className="absolute inset-0 z-0">
-            <div className="absolute inset-0 bg-black/40 z-10"></div>
-            <img
-              className="w-full h-full object-cover"
-              alt="Farmer standing in field"
-              src={farmerBg}
-            />
+            <img src="/wheat.png" alt="" className="w-full h-full object-cover" />
+            <div className="absolute inset-0" style={{ background: 'rgba(253,248,240,0.03)' }}></div>
           </div>
-          <div className="relative z-20 max-w-[960px] px-6 text-center text-white">
-            <h1 className="text-4xl md:text-6xl font-black leading-tight tracking-tight mb-6">Krishiculture</h1>
-            <p className="text-lg md:text-xl font-normal mb-10 max-w-3xl mx-auto opacity-90">
-              Simplifying access to government schemes, insurance, and financial support for farmers through minimal input and smart technology.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => navigate("/home")}
-                className="min-w-[200px] h-14 bg-primary text-white rounded-xl font-bold text-lg shadow-lg hover:scale-105 transition-transform"
-              >
-                Check Your Eligibility
-              </button>
-              <button
-                onClick={() => navigate("/home")}
-                className="min-w-[200px] h-14 bg-white/20 backdrop-blur-sm text-white border-2 border-white rounded-xl font-bold text-lg hover:bg-white/30 transition-all"
-              >
-                Explore Schemes
-              </button>
+
+          <div className="relative z-10 max-w-[1400px] mx-auto px-6 lg:px-10 w-full">
+            <div className="grid lg:grid-cols-2 gap-4 items-center py-16 lg:py-20">
+              {/* Left - Text */}
+              <div className="order-2 lg:order-1">
+                <h1 className="text-6xl md:text-7xl lg:text-8xl font-black leading-tight tracking-tight mb-6" style={{ color: '#1A0A00' }}>
+                  Krishi<span style={{ color: '#D4A843' }}>culture</span>
+                </h1>
+                <p className="text-2xl md:text-3xl font-normal mb-8 max-w-2xl leading-relaxed" style={{ color: '#000000' }}>
+                  Simplifying access to government schemes, insurance, and financial support for farmers through minimal input and smart technology.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={() => navigate("/home")}
+                    className="min-w-[200px] h-14 text-white rounded-xl font-bold text-lg shadow-lg hover:scale-105 transition-transform"
+                    style={{ background: 'linear-gradient(135deg, #B8952F 0%, #D4A843 50%, #C8A84E 100%)', boxShadow: '0 8px 24px rgba(184, 149, 47, 0.35)' }}
+                  >
+                    Check Your Eligibility
+                  </button>
+                  <button
+                    onClick={() => navigate("/home")}
+                    className="min-w-[200px] h-14 text-white rounded-xl font-bold text-lg shadow-lg hover:scale-105 transition-transform"
+                    style={{ background: 'linear-gradient(135deg, #B8952F 0%, #D4A843 50%, #C8A84E 100%)', boxShadow: '0 8px 24px rgba(184, 149, 47, 0.35)' }}
+                  >
+                    Explore Schemes
+                  </button>
+                </div>
+              </div>
+
+              {/* Right - Circular Farmer Image */}
+              <div className="order-1 lg:order-2 flex justify-center lg:justify-end lg:-mr-12">
+                <div className="relative">
+                  <div className="absolute -inset-4 rounded-full opacity-20" style={{ background: 'linear-gradient(135deg, #D4A843, #C8A84E, #B8952F)', filter: 'blur(16px)' }}></div>
+                  <div className="relative w-[380px] h-[380px] md:w-[460px] md:h-[460px] lg:w-[550px] lg:h-[550px] rounded-full p-2" style={{ background: 'linear-gradient(135deg, #D4A843 0%, #F0D78C 30%, #C8A84E 60%, #B8952F 100%)', boxShadow: '0 20px 60px rgba(184, 149, 47, 0.3), 0 8px 24px rgba(0,0,0,0.1)' }}>
+                    <div className="w-full h-full rounded-full overflow-hidden" style={{ boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.1)' }}>
+                      <img className="w-full h-full object-cover" alt="Happy Indian farmer in wheat field" src="/farmer-bg.png" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="mt-6 text-sm font-medium opacity-80 italic">
-              No complex forms. No confusion. Just the right support.
-            </p>
           </div>
         </section>
 
         {/* ── Problem Section ── */}
-        <section className="py-20 px-6 lg:px-40 bg-white">
-          <div className="max-w-[1280px] mx-auto">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">The Challenge</h2>
-                <h3 className="text-4xl font-black text-[#112211] mb-6 leading-tight">
-                  Why Farmers Struggle to Access Benefits
-                </h3>
-                <p className="text-lg text-[#618961] mb-8 leading-relaxed">
-                  Farmers often miss out on government schemes and insurance benefits due to complex procedures, scattered information, and lengthy paperwork.
-                </p>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-6">
-                {challenges.map((c, i) => (
-                  <div key={i} className="p-6 rounded-xl border border-[#dbe6db] bg-background-light">
-                    <span className="material-symbols-outlined text-primary text-3xl mb-4 block">{c.icon}</span>
-                    <h4 className="font-bold text-lg mb-2">{c.title}</h4>
-                    <p className="text-sm text-[#618961]">{c.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Solution / How It Works ── */}
-        <section id="how-it-works" className="py-20 px-6 lg:px-40 bg-primary/5">
+        <section id="problems" className="py-20 px-6 lg:px-40 bg-primary/5">
           <div className="max-w-[1280px] mx-auto text-center mb-16">
-            <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">The Solution</h2>
-            <h3 className="text-4xl font-black text-[#112211] mb-6">Our Solution</h3>
-            <p className="text-lg text-[#416941] max-w-3xl mx-auto">
-              Our platform uses 2-3 smart filters to instantly match farmers with relevant state and central government schemes, insurance, and financial support.
-            </p>
+            <h3 className="text-4xl font-black text-[#112211] mb-6">Why Farmers Struggle Today</h3>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-[1100px] mx-auto">
-            {steps.map((s) => (
-              <div key={s.n} className="flex flex-col items-center text-center group">
-                <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center text-2xl font-bold mb-6 group-hover:scale-110 transition-transform">
-                  {s.n}
+          <div className="flex flex-col md:flex-row justify-center items-center gap-20 max-w-[1200px] mx-auto">
+            {problems.map((p, i) => (
+              <div
+                key={i}
+                className="group flex flex-col items-center justify-center text-center px-10 py-12 transition-all duration-300 hover:scale-105"
+                style={{
+                  width: '340px',
+                  minHeight: '240px',
+                  borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #ffffff 0%, #f0faf0 60%, #e6f4e6 100%)',
+                  border: '3px solid #a8d5a8',
+                }}
+              >
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center text-lg font-black text-white mb-4 group-hover:scale-110 transition-transform"
+                  style={{ background: 'linear-gradient(135deg, #B8952F, #D4A843)' }}
+                >
+                  {i + 1}
                 </div>
-                <h4 className="text-xl font-bold mb-3">{s.title}</h4>
-                <p className="text-[#618961]">{s.desc}</p>
+                <h4 className="text-lg font-black mb-2 text-[#112211]">{p.title}</h4>
+                <p className="text-sm text-[#618961] leading-relaxed max-w-[200px]">{p.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── Key Features ── */}
-        <section id="schemes" className="py-20 px-6 lg:px-40 bg-white">
-          <div className="max-w-[1280px] mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-              <div className="max-w-xl">
-                <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">Key Features</h2>
-                <h3 className="text-4xl font-black text-[#112211]">Designed for Modern Agriculture</h3>
-              </div>
-              <button className="text-primary font-bold flex items-center gap-2 hover:underline">
-                View All Features <span className="material-symbols-outlined">arrow_forward</span>
-              </button>
+        {/* ── How It Works with Stylish Boxes ── */}
+        <section id="schemes" className="py-20 px-6 lg:px-40 bg-white relative overflow-hidden">
+          <div className="absolute inset-0 z-0 opacity-8">
+            <img 
+              src="/leaf.png" 
+              alt="leaf background" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="absolute inset-0 z-0" style={{ background: 'radial-gradient(ellipse at top right, rgba(212,168,67,0.03) 0%, transparent 70%)' }}></div>
+          <div className="max-w-[1280px] mx-auto relative z-10">
+            <div className="text-center mb-16">
+              <h3 className="text-4xl font-black text-[#112211] mb-6">How It Works</h3>
+              <p className="text-lg text-[#618961] max-w-xl mx-auto">
+                We simplify the process so farmers can focus on farming.
+              </p>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {features.map((f, i) => (
-                <div key={i} className="p-8 rounded-2xl border border-[#f0f4f0] bg-white shadow-sm hover:shadow-md transition-shadow">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 text-primary flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined">{f.icon}</span>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-[1280px] mx-auto">
+              {[
+                {
+                  num: "01",
+                  icon: "tune",
+                  title: "Minimal Input, Maximum Match",
+                  desc: "Farmers answer just a few simple questions — state, land, and crops. Our engine does the heavy lifting to surface every scheme they qualify for."
+                },
+                {
+                  num: "02",
+                  icon: "hub",
+                  title: "Single Source of Truth",
+                  desc: "All central and state schemes are aggregated in one place. No more jumping between portals or relying on word-of-mouth."
+                },
+                {
+                  num: "03",
+                  icon: "language",
+                  title: "Language-First Accessibility",
+                  desc: "Voice input and multi-language support (English, Hindi, Odia) ensure that literacy or language is never a barrier to accessing benefits."
+                },
+                {
+                  num: "04",
+                  icon: "checklist",
+                  title: "End-to-End Guidance",
+                  desc: "From discovering a scheme to submitting an application — we walk farmers through every document, step, and deadline with clarity."
+                },
+              ].map((a, i) => (
+                <div
+                  key={i}
+                  className="group bg-white rounded-xl p-6 border border-gray-200 hover:border-[#D4A843] transition-all duration-300 hover:shadow-xl"
+                  style={{ boxShadow: '0 4px 12px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.1)' }}
+                >
+                  {/* Step number + icon */}
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="w-14 h-14 rounded-lg bg-gradient-to-br from-[#B8952F]/10 to-[#D4A843]/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-[#D4A843]/20">
+                      <span className="material-symbols-outlined text-3xl" style={{ color: '#B8952F' }}>{a.icon}</span>
+                    </div>
+                    <span className="text-4xl font-black" style={{ color: '#D4A843', opacity: 0.3 }}>{a.num}</span>
                   </div>
-                  <h4 className="text-lg font-bold mb-3">{f.title}</h4>
-                  <p className="text-[#618961] text-sm leading-relaxed">{f.desc}</p>
+
+                  <h4 className="text-lg font-bold mb-3 text-[#1E0F05] group-hover:text-[#B8952F] transition-colors duration-300">
+                    {a.title}
+                  </h4>
+                  <p className="text-sm text-[#618961] leading-relaxed">{a.desc}</p>
+
+                  <div className="w-0 h-0.5 bg-gradient-to-r from-[#B8952F] to-[#D4A843] group-hover:w-full transition-all duration-300 mt-4"></div>
                 </div>
               ))}
             </div>
+
           </div>
         </section>
 
@@ -191,8 +206,7 @@ export default function LandingPage() {
         <section id="impact" className="py-20 px-6 lg:px-40 bg-[#112211] text-white">
           <div className="max-w-[1280px] mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-primary font-bold tracking-widest uppercase text-sm mb-4">Our Impact</h2>
-              <h3 className="text-4xl font-black mb-6">Creating Measurable Impact</h3>
+              <h3 className="text-4xl font-black mb-6">Our Impact So Far</h3>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {metrics.map((m, i) => (
@@ -216,9 +230,11 @@ export default function LandingPage() {
             />
           </div>
           <div className="relative z-10 max-w-[800px] mx-auto text-center">
-            <h3 className="text-4xl md:text-5xl font-black text-[#112211] mb-8 leading-tight">Krishiculture</h3>
+            <h3 className="text-4xl md:text-5xl font-black text-[#112211] mb-8 leading-tight">
+              Get the Help Your Farm Deserves
+            </h3>
             <p className="text-xl text-[#416941] mb-12">
-              Join thousands of farmers who are already securing their financial future through AgriScheme Access.
+              Join thousands of farmers who are already securing their financial future through Krishiculture.
             </p>
             <button
               onClick={() => navigate("/home")}
@@ -240,64 +256,6 @@ export default function LandingPage() {
         </section>
       </main>
 
-      {/* ── Footer ── */}
-      <footer className="bg-background-light border-t border-[#dbe6db] py-12 px-6 lg:px-40">
-        <div className="max-w-[1280px] mx-auto grid md:grid-cols-4 gap-12">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-3 mb-6">
-              <div className="text-primary">
-                <span className="material-symbols-outlined text-2xl">agriculture</span>
-              </div>
-              <h2 className="text-[#111811] text-lg font-bold tracking-tight">Krishiculture</h2>
-            </div>
-            <p className="text-sm text-[#618961] leading-relaxed">
-              Dedicated to bringing the benefits of governance to every farmer's doorstep.
-            </p>
-          </div>
-
-          {/* Platform */}
-          <div>
-            <h4 className="font-bold text-[#111811] mb-4">Platform</h4>
-            <ul className="space-y-2 text-sm text-[#618961]">
-              {platformLinks.map((l) => (
-                <li key={l}><a className="hover:text-primary transition-colors" href="#">{l}</a></li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <h4 className="font-bold text-[#111811] mb-4">Resources</h4>
-            <ul className="space-y-2 text-sm text-[#618961]">
-              {resourceLinks.map((l) => (
-                <li key={l}><a className="hover:text-primary transition-colors" href="#">{l}</a></li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Connect */}
-          <div>
-            <h4 className="font-bold text-[#111811] mb-4">Connect</h4>
-            <div className="flex gap-4">
-              {["public", "mail", "call"].map((icon) => (
-                <a key={icon} className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors" href="#">
-                  <span className="material-symbols-outlined text-sm">{icon}</span>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-[1280px] mx-auto mt-12 pt-8 border-t border-[#dbe6db] flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-xs text-[#618961]">© 2024 AgriScheme Access Platform. All rights reserved.</p>
-          <div className="flex gap-6 text-xs text-[#618961]">
-            <a className="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-            <a className="hover:text-primary transition-colors" href="#">Terms of Service</a>
-            <a className="hover:text-primary transition-colors" href="#">Accessibility</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
