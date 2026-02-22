@@ -84,10 +84,13 @@ export default function SchemeCard({ scheme }) {
         overflow-hidden group
       "
     >
-      <div className="p-5 flex gap-5">
+      {/* Mobile: top color bar, Desktop: left strip */}
+      <div className={`h-1 sm:hidden w-full ${scheme?.category === "INSURANCE" ? "bg-blue-500" : scheme?.category === "WELFARE" ? "bg-amber-500" : "bg-emerald-500"}`} />
+      
+      <div className="p-4 sm:p-5 flex flex-col sm:flex-row gap-3 sm:gap-5">
 
-        {/* LEFT: Category indicator */}
-        <div className={`w-1.5 self-stretch rounded-full shrink-0 ${scheme?.category === "INSURANCE" ? "bg-blue-500" : scheme?.category === "WELFARE" ? "bg-amber-500" : "bg-emerald-500"}`} />
+        {/* LEFT: Category indicator - hidden on mobile, shown on desktop */}
+        <div className={`hidden sm:block w-1.5 self-stretch rounded-full shrink-0 ${scheme?.category === "INSURANCE" ? "bg-blue-500" : scheme?.category === "WELFARE" ? "bg-amber-500" : "bg-emerald-500"}`} />
 
         {/* MIDDLE: Content */}
         <div className="flex-1 min-w-0">
@@ -164,10 +167,10 @@ export default function SchemeCard({ scheme }) {
           </div>
         </div>
 
-        {/* RIGHT: Apply button */}
-        <div className="flex flex-col items-end justify-between shrink-0">
+        {/* RIGHT on desktop / BOTTOM on mobile: Apply button */}
+        <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-between shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
           {scheme?.min_land_acres && (
-            <span className="text-[11px] text-slate-400 font-medium whitespace-nowrap mb-2">
+            <span className="text-[11px] text-slate-400 font-medium whitespace-nowrap sm:mb-2">
               {t('card.minAcre', { n: scheme.min_land_acres })}
             </span>
           )}
@@ -178,9 +181,9 @@ export default function SchemeCard({ scheme }) {
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             className="
-              px-5 py-2.5 rounded-xl
+              px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl
               bg-emerald-600 text-white
-              text-sm font-semibold
+              text-xs sm:text-sm font-semibold
               hover:bg-emerald-700 active:scale-95
               transition-all whitespace-nowrap
               shadow-sm hover:shadow

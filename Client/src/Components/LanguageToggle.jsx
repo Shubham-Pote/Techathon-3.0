@@ -45,11 +45,11 @@ export default function LanguageToggle() {
       {/* Trigger button */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 transition-all text-white text-sm font-medium"
+        className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 rounded-xl bg-white/10 border border-white/20 hover:bg-white/20 transition-all text-white text-sm font-medium"
       >
         {/* Globe icon */}
         <svg
-          className="w-5 h-5 text-emerald-300"
+          className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-300"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -58,10 +58,11 @@ export default function LanguageToggle() {
           <circle cx="12" cy="12" r="10" />
           <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10A15.3 15.3 0 0 1 12 2z" />
         </svg>
-        <span>{current.label}</span>
+        <span className="hidden sm:inline">{current.label}</span>
+        <span className="sm:hidden text-xs">{current.code.toUpperCase()}</span>
         {/* Chevron */}
         <svg
-          className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -73,7 +74,7 @@ export default function LanguageToggle() {
 
       {/* Dropdown panel */}
       {open && (
-        <div className="absolute right-0 mt-2 w-64 max-h-[420px] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-200 py-2 z-[100] animate-in fade-in slide-in-from-top-2">
+        <div className="absolute right-0 mt-2 w-56 sm:w-64 max-h-[70vh] sm:max-h-[420px] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-200 py-2 z-[100] animate-in fade-in slide-in-from-top-2">
           {LANGUAGES.map((l) => {
             const isActive = l.code === i18n.language
             return (

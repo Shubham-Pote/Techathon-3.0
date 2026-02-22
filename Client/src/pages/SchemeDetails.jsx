@@ -181,7 +181,7 @@ export default function SchemeDetails() {
         </aside>
 
         {/* ===== MAIN ===== */}
-        <main className="flex-1 max-w-[960px] px-10 lg:px-16 py-10 pb-32">
+        <main className="flex-1 max-w-[960px] px-4 sm:px-6 lg:px-16 py-6 sm:py-10 pb-24 sm:pb-32">
           <button
             onClick={() => navigate("/home")}
             className="inline-flex items-center gap-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium mb-6 transition-colors"
@@ -195,8 +195,8 @@ export default function SchemeDetails() {
   
 
   {/* Title + Download in same row */}
-  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
-    <h1 className="text-[32px] font-bold text-gray-900 leading-tight">
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4 mb-4 sm:mb-5">
+    <h1 className="text-xl sm:text-2xl md:text-[32px] font-bold text-gray-900 leading-tight">
       {trName || scheme.scheme_name}
     </h1>
    
@@ -212,7 +212,7 @@ export default function SchemeDetails() {
    
 
             {/* Tags */}
-            <div className="flex flex-wrap gap-2.5 mb-6">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2.5 mb-4 sm:mb-6">
               <Tag label={trCategory || scheme.category} color="emerald" />
               {proc.mode && <Tag label={trMode || proc.mode} color="blue" />}
               {scheme.min_land_acres && (
@@ -228,11 +228,11 @@ export default function SchemeDetails() {
 
             {/* Financial summary */}
             {details.financial_assistance_summary && (
-              <div className="bg-emerald-50 border-l-4 border-emerald-600 rounded-r px-5 py-4 mb-6">
-                <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">
+              <div className="bg-emerald-50 border-l-4 border-emerald-600 rounded-r px-3 sm:px-5 py-3 sm:py-4 mb-4 sm:mb-6">
+                <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">
                   {t('schemeDetail.financialAssistance')}
                 </p>
-                <p className="text-[16px] text-gray-900 font-semibold leading-relaxed">
+                <p className="text-sm sm:text-[16px] text-gray-900 font-semibold leading-relaxed">
                   {translatedSummary ?? details.financial_assistance_summary}
                 </p>
               </div>
@@ -257,12 +257,12 @@ export default function SchemeDetails() {
 
       {/* Floating Apply Button */}
       {proc.portal_url && (
-        <div className="fixed bottom-6 right-6 z-50">
+        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50">
           <a
             href={proc.portal_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center gap-2 bg-emerald-600 text-white px-6 py-3 rounded-full text-sm font-semibold shadow-lg hover:bg-emerald-700 hover:shadow-xl transition-all duration-300"
+            className="group inline-flex items-center gap-2 bg-emerald-600 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-semibold shadow-lg hover:bg-emerald-700 hover:shadow-xl transition-all duration-300"
           >
             {t('schemeDetail.applyNow')}
           </a>

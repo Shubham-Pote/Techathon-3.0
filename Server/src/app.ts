@@ -9,7 +9,7 @@ import schemeRoutes from "./modules/Schemes/schemes.routes.js";
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: true,
   credentials: true
 }));
 

@@ -55,15 +55,23 @@ export default function SchemePage({ search = "" }) {
 
   /* ================= FILTER + SORT ================= */
   const filtered = useMemo(() => {
-    const searchTerm = search?.toLowerCase() || ""
+    const searchTerm = search?.toLowerCase().trim() || ""
 
     let result = schemes.filter((s) => {
       const eligible = farmerProfile ? isEligible(s, farmerProfile) : true
-      const schemeName = (s?.scheme_name || "").toLowerCase()
       const schemeCrops = s?.supported_crops || []
 
+      const matchesSearch = !searchTerm || [
+        s?.scheme_name || "",
+        s?.state || "",
+        s?.category || "",
+        s?.details?.description || "",
+        s?.details?.financial_assistance_summary || "",
+        ...(schemeCrops),
+      ].some((field) => field.toLowerCase().includes(searchTerm))
+
       return (
-        schemeName.includes(searchTerm) &&
+        matchesSearch &&
         (stateFilter.length === 0 || stateFilter.includes(s?.state)) &&
         (categoryFilter.length === 0 || categoryFilter.includes(s?.category)) &&
         (cropFilter.length === 0 || schemeCrops.length === 0 || cropFilter.some((c) => schemeCrops.includes(c))) &&
@@ -216,19 +224,19 @@ export default function SchemePage({ search = "" }) {
       </aside>
 
       {/* ================= CONTENT ================= */}
-      <main className="flex-1 px-6 py-6 lg:px-8">
+      <main className="flex-1 px-3 sm:px-6 py-4 sm:py-6 lg:px-8">
 
         {/* Stats bar */}
        
 
         {/* Title + Sort */}
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-5">
           <div>
-            <h1 className="text-xl font-bold text-slate-800">
+            <h1 className="text-lg sm:text-xl font-bold text-slate-800">
               {t('schemes.heading')}
             </h1>
             {!loading && (
-              <p className="text-sm text-slate-500 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
                 {t('schemes.showing', { n: paginatedSchemes.length, total: filtered.length })}
               </p>
             )}

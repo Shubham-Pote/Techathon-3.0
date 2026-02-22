@@ -1,6 +1,8 @@
 import { useAuth } from "../context/AuthContext"
 import { useTranslation } from "react-i18next"
 import LanguageToggle from "./LanguageToggle"
+import WeatherButton from "./WeatherButton"
+import HelpCenterButton from "./HelpCenterButton"
 import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 
@@ -32,14 +34,14 @@ export default function Navbar({ variant }) {
     <nav
       className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${navbarStyle} text-white`}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-8 py-3.5">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4 sm:px-8 py-3">
 
         {/* LEFT */}
         <div
-          className="flex items-center gap-2 cursor-pointer hover:opacity-90 transition"
+          className="flex items-center gap-2 cursor-pointer hover:opacity-90 transition -ml-30"
           onClick={() => navigate("/home")}
         >
-          <div className="w-9 h-9 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-sm -ml-20">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-sm">
             {/* Leaf-in-circle logomark */}
             <svg
               aria-hidden="true"
@@ -61,17 +63,19 @@ export default function Navbar({ variant }) {
               />
             </svg>
           </div>
-          <h1 className="text-xl font-bold tracking-tight">
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight">
             Krishiculture
           </h1>
         </div>
 
         {/* RIGHT */}
-        <div className="flex gap-6 items-center text-sm font-medium -mr-20">
+        <div className="flex gap-2 sm:gap-4 items-center text-sm font-medium -mr-20">
 
           <LanguageToggle />
 
-          
+          <HelpCenterButton />
+
+          <WeatherButton />
 
           <button
             onClick={() => {
@@ -79,7 +83,7 @@ export default function Navbar({ variant }) {
               else navigate("/login")
             }}
             className="
-              px-5 py-2 rounded-xl
+              px-3 sm:px-5 py-2 rounded-xl text-xs sm:text-sm
               bg-white/10 border border-white/20
               hover:bg-white hover:text-emerald-900
               transition-all font-semibold shadow-sm
