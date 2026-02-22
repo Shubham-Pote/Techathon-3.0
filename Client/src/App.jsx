@@ -11,6 +11,7 @@ export default function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
+<<<<<<< Updated upstream
 
         <BrowserRouter>
           <SpeakOnSelect />
@@ -31,6 +32,10 @@ export default function App() {
 
         </BrowserRouter>
 
+=======
+        
+        <Home />
+>>>>>>> Stashed changes
       </AuthProvider>
     </LanguageProvider>
   )

@@ -4,6 +4,7 @@ import {
   getAllSchemesService,
   getSchemeByIdService
 } from "./schemes.service.js";
+import { scrapeSchemes } from "../../jobs/scheme-scraper.js";
 
 export const getAllSchemes = async (req: AuthRequest, res: Response) => {
   try {
@@ -40,6 +41,29 @@ export const getSchemeById = async (
       data: scheme
     });
 
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
+};
+
+export const triggerScraper = async (req: Request, res: Response) => {
+  try {
+    console.log("Manual scraper trigger initiated...");
+    
+    // Run scraper in background
+    scrapeSchemes().then(() => {
+      console.log("Scraper completed successfully");
+    }).catch((err) => {
+      console.error("Scraper failed:", err);
+    });
+
+    res.json({
+      success: true,
+      message: "Scraper triggered successfully. Check server logs and database for results."
+    });
   } catch (err: any) {
     res.status(500).json({
       success: false,
