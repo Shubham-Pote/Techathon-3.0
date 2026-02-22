@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react"
 import SchemeCard from "./SchemeCard"
 import { getAllSchemes } from "../services/schemeService"
 import { useAuth } from "../context/AuthContext"
+import { useBookmarks } from "../context/BookmarkContext"
 import { isEligible } from "../utils/eligibility"
 import { useTranslation } from "react-i18next"
 
@@ -14,6 +15,7 @@ export default function SchemePage({ search = "" }) {
   const [categoryFilter, setCategoryFilter] = useState([])
   const [cropFilter, setCropFilter] = useState([])
   const [eligibilityFilter, setEligibilityFilter] = useState("all")
+  const [showBookmarks, setShowBookmarks] = useState(false)
 
   const [sortOrder, setSortOrder] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
@@ -22,6 +24,7 @@ export default function SchemePage({ search = "" }) {
   const schemesPerPage = 10
 
   const { user } = useAuth()
+  const { bookmarks } = useBookmarks()
   const farmerProfile = user?.profile
 
   /* ================= FETCH ALL SCHEMES ONCE ================= */
@@ -46,7 +49,7 @@ export default function SchemePage({ search = "" }) {
   /* ================= RESET PAGE on filter/search change ================= */
   useEffect(() => {
     setCurrentPage(1)
-  }, [stateFilter, categoryFilter, cropFilter, eligibilityFilter, sortOrder, search])
+  }, [stateFilter, categoryFilter, cropFilter, eligibilityFilter, sortOrder, search, showBookmarks])
 
   /* ================= UNIQUE VALUES FOR FILTERS ================= */
   const states = [...new Set(schemes.map((s) => s?.state).filter(Boolean))]
@@ -72,6 +75,7 @@ export default function SchemePage({ search = "" }) {
 
       return (
         matchesSearch &&
+        (!showBookmarks || bookmarks.includes(s?.scheme_id)) &&
         (stateFilter.length === 0 || stateFilter.includes(s?.state)) &&
         (categoryFilter.length === 0 || categoryFilter.includes(s?.category)) &&
         (cropFilter.length === 0 || schemeCrops.length === 0 || cropFilter.some((c) => schemeCrops.includes(c))) &&
@@ -85,7 +89,7 @@ export default function SchemePage({ search = "" }) {
     if (sortOrder === "desc") result.sort((a, b) => (b?.scheme_name || "").localeCompare(a?.scheme_name || ""))
 
     return result
-  }, [schemes, search, stateFilter, categoryFilter, cropFilter, eligibilityFilter, sortOrder, farmerProfile])
+  }, [schemes, search, stateFilter, categoryFilter, cropFilter, eligibilityFilter, sortOrder, farmerProfile, showBookmarks, bookmarks])
 
   /* ================= PAGINATION ================= */
   const totalPages = Math.ceil(filtered.length / schemesPerPage)
@@ -237,20 +241,41 @@ export default function SchemePage({ search = "" }) {
             </h1>
             {!loading && (
               <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                {t('schemes.showing', { n: paginatedSchemes.length, total: filtered.length })}
+                🌾 More than 100 schemes available
               </p>
             )}
           </div>
 
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 outline-none"
-          >
-            <option value="">{t('schemes.sortDefault')}</option>
-            <option value="asc">{t('schemes.sortAZ')}</option>
-            <option value="desc">{t('schemes.sortZA')}</option>
-          </select>
+          <div className="flex items-center gap-2">
+            {/* Bookmarks toggle */}
+            {user && (
+              <button
+                onClick={() => setShowBookmarks((v) => !v)}
+                className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-xl border font-semibold transition-all ${
+                  showBookmarks
+                    ? "bg-amber-50 border-amber-300 text-amber-700"
+                    : "bg-white border-slate-200 text-slate-600 hover:border-amber-300 hover:text-amber-600"
+                }`}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={showBookmarks ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                </svg>
+                {bookmarks.length > 0 && (
+                  <span className="text-xs bg-amber-200/60 text-amber-800 px-1.5 py-0.5 rounded-full leading-none">{bookmarks.length}</span>
+                )}
+              </button>
+            )}
+
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 outline-none"
+            >
+              <option value="">{t('schemes.sortDefault')}</option>
+              <option value="asc">{t('schemes.sortAZ')}</option>
+              <option value="desc">{t('schemes.sortZA')}</option>
+            </select>
+          </div>
         </div>
 
         {loading ? (

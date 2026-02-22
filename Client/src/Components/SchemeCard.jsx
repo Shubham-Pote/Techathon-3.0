@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "../context/AuthContext"
+import { useBookmarks } from "../context/BookmarkContext"
 import { isEligible } from "../utils/eligibility"
 import { translateText, translateArray } from "../utils/translate"
 
@@ -16,8 +17,10 @@ export default function SchemeCard({ scheme }) {
   const lang = i18n.language
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { isBookmarked, toggleBookmark } = useBookmarks()
 
   const farmerProfile = user?.profile
+  const bookmarked = isBookmarked(scheme?.scheme_id)
 
   const eligible =
     farmerProfile && isEligible(scheme, farmerProfile)
@@ -101,8 +104,26 @@ export default function SchemeCard({ scheme }) {
               {trName || "Unnamed Scheme"}
             </h3>
 
-            {/* Eligibility badge */}
-            {farmerProfile && (
+            <div className="flex items-center gap-1.5 shrink-0">
+              {/* Bookmark button */}
+              {user && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); toggleBookmark(scheme?.scheme_id) }}
+                  className={`p-1.5 rounded-lg transition-all duration-200 ${
+                    bookmarked
+                      ? "text-amber-500 bg-amber-50 hover:bg-amber-100"
+                      : "text-slate-300 hover:text-amber-400 hover:bg-slate-50"
+                  }`}
+                  title={bookmarked ? "Remove bookmark" : "Bookmark scheme"}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={bookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2} className="w-[18px] h-[18px]">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                  </svg>
+                </button>
+              )}
+
+              {/* Eligibility badge */}
+              {farmerProfile && (
               <span
                 className={`
                   shrink-0 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap
@@ -115,6 +136,7 @@ export default function SchemeCard({ scheme }) {
                 {eligible ? t('card.eligible') : t('card.notEligible')}
               </span>
             )}
+            </div>
           </div>
 
           {/* State + Category */}

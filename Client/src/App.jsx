@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage"
 import LandingPage from "./pages/LandingPage"
 
 import { AuthProvider } from "./context/AuthContext"
+import { BookmarkProvider } from "./context/BookmarkContext"
 import { LanguageProvider } from "./context/LanguageContext"
 import SchemeDetails from "./pages/SchemeDetails"
 import SpeakOnSelect from "./Components/SpeakOnSelect"
@@ -12,6 +13,7 @@ export default function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
+        <BookmarkProvider>
         <BrowserRouter>
           <SpeakOnSelect />
           <Chatbot />
@@ -28,6 +30,7 @@ export default function App() {
             <Route path="/schemes/:id" element={<SchemeDetails />} />
           </Routes>
         </BrowserRouter>
+        </BookmarkProvider>
       </AuthProvider>
     </LanguageProvider>
   )

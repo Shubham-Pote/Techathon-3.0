@@ -8,6 +8,7 @@ import OtpStep from "../Components/LoginSteps/otpStep"
 import DetailsStep from "../Components/LoginSteps/DetailsStep"
 import { useAuth } from "../context/AuthContext"
 import Shetkari2 from "../assets/features/shetkari2.jpeg"
+import AuthBack from "../assets/features/AuthBack.jpg"
 import LanguageToggle from "../Components/LanguageToggle"
 
 export default function LoginPage() {
@@ -71,8 +72,10 @@ export default function LoginPage() {
       </div>
 
       {/* RIGHT SIDE */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-green-100 p-6">
-        <div className="w-full max-w-md">
+      <div className="w-full lg:w-1/2 flex items-center justify-center relative overflow-hidden p-6">
+        <img src={AuthBack} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-br from-green-50/85 via-emerald-50/80 to-green-100/85 backdrop-blur-[2px]"></div>
+        <div className="w-full max-w-md relative z-10">
           <div className="bg-white/75 backdrop-blur-2xl p-10 rounded-3xl shadow-[0_25px_70px_rgba(0,0,0,0.15)] border border-white/50">
 
             <div className="text-center mb-8">
