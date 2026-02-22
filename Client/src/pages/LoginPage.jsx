@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { motion, AnimatePresence } from "framer-motion"
 
 import PhoneStep from "../Components/LoginSteps/PhoneStep"
@@ -7,17 +8,19 @@ import OtpStep from "../Components/LoginSteps/otpStep"
 import DetailsStep from "../Components/LoginSteps/DetailsStep"
 import { useAuth } from "../context/AuthContext"
 import Shetkari2 from "../assets/features/shetkari2.jpeg"
+import LanguageToggle from "../Components/LanguageToggle"
 
 export default function LoginPage() {
   const navigate = useNavigate()
   const { login } = useAuth()
+  const { t } = useTranslation()
 
   const [step, setStep] = useState(1)
   const [phone, setPhone] = useState("")
   const [tempToken, setTempToken] = useState(null)
   const [devOtp, setDevOtp] = useState(null)
 
-  const steps = ["Phone", "OTP", "Details"]
+  const steps = [t('auth.stepPhone'), t('auth.stepOtp'), t('auth.stepDetails')]
 
   // ✅ After OTP verification → go to Details step
   const handleOtpSuccess = (token) => {
@@ -38,7 +41,12 @@ export default function LoginPage() {
 
 
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative">
+
+      {/* Language Toggle - top right */}
+      <div className="absolute top-4 right-4 z-50">
+        <LanguageToggle />
+      </div>
 
       {/* LEFT SIDE */}
       <div className="hidden lg:flex w-1/2 relative">
@@ -51,13 +59,13 @@ export default function LoginPage() {
 
         <div className="relative z-10 flex flex-col justify-center px-16 text-white">
           <h1 className="text-5xl font-bold mb-4 leading-tight">
-            Welcome Farmer !!
+            {t('auth.welcomeTitle')}
           </h1>
           <p className="text-xl opacity-90 max-w-md mb-6">
-            Access government schemes, benefits, and support designed especially for you.
+            {t('auth.welcomeDesc')}
           </p>
           <div className="bg-white/20 backdrop-blur-md p-4 rounded-xl w-fit">
-            Empowering Farmers Digitally
+            {t('auth.empoweringBadge')}
           </div>
         </div>
       </div>
@@ -69,10 +77,10 @@ export default function LoginPage() {
 
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-800">
-                Farmer Login
+                {t('auth.loginTitle')}
               </h2>
               <p className="text-sm text-gray-500 mt-1">
-                Secure & quick access
+                {t('auth.loginSubtitle')}
               </p>
             </div>
 
@@ -135,7 +143,7 @@ export default function LoginPage() {
             </AnimatePresence>
 
             <p className="text-xs text-center text-gray-400 mt-8">
-              Secure • Government Verified • No data shared
+              {t('auth.footer')}
             </p>
 
           </div>

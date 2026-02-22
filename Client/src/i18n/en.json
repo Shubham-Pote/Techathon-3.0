@@ -138,7 +138,24 @@
       { "value": "$2B+", "label": "Financial Inclusion", "desc": "Total benefits facilitated through our portal" }
     ],
     "platformLinks": ["Available Schemes", "Insurance Plans", "Eligibility Checker", "Financial Support"],
-    "resourceLinks": ["Farming Tips", "Success Stories", "Help Center", "Policy Updates"]
+    "resourceLinks": ["Farming Tips", "Success Stories", "Help Center", "Policy Updates"],
+    "howItWorks": [
+      { "num": "01", "icon": "tune",      "title": "Minimal Input, Maximum Match",   "desc": "Farmers answer just a few simple questions — state, land, and crops. Our engine does the heavy lifting to surface every scheme they qualify for." },
+      { "num": "02", "icon": "hub",       "title": "Single Source of Truth",         "desc": "All central and state schemes are aggregated in one place. No more jumping between portals or relying on word-of-mouth." },
+      { "num": "03", "icon": "language",  "title": "Language-First Accessibility",  "desc": "Voice input and multi-language support ensure that literacy or language is never a barrier to accessing benefits." },
+      { "num": "04", "icon": "checklist", "title": "End-to-End Guidance",            "desc": "From discovering a scheme to submitting an application — we walk farmers through every document, step, and deadline." }
+    ]
+  },
+  "auth": {
+    "loginTitle": "Farmer Login",
+    "loginSubtitle": "Secure & quick access",
+    "welcomeTitle": "Welcome Farmer",
+    "welcomeDesc": "Access government schemes, benefits, and support designed especially for you.",
+    "empoweringBadge": "Empowering Farmers Digitally",
+    "stepPhone": "Phone",
+    "stepOtp": "OTP",
+    "stepDetails": "Details",
+    "footer": "Secure • Government Verified • No data shared"
   },
   "chatbot": {
     "title": "Krishi Mitra 🌾",

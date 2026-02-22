@@ -128,7 +128,7 @@ export default function Chatbot() {
 
           {/* Free image */}
           <div className="relative shrink-0 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-200 drop-shadow-xl">
-            <img src={botImage} alt="Krishi Mitra" className="w-[64px] h-auto object-contain" />
+            <img src={botImage} alt="Krishi Mitra" className="w-[64px] h-[64px] object-cover rounded-full border-2 border-white shadow-lg" />
             {/* Online dot */}
             <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-400 border-2 border-white rounded-full shadow" />
           </div>
