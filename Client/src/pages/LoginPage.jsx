@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 
 import PhoneStep from "../Components/LoginSteps/PhoneStep"
-import OtpStep from "../Components/LoginSteps/OtpStep"
+import OtpStep from "../Components/LoginSteps/otpStep"
 import DetailsStep from "../Components/LoginSteps/DetailsStep"
 import { useAuth } from "../context/AuthContext"
 import Shetkari2 from "../assets/features/shetkari2.jpeg"
