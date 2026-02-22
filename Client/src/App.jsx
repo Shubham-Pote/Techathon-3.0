@@ -11,13 +11,10 @@ export default function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
-<<<<<<< Updated upstream
-
         <BrowserRouter>
           <SpeakOnSelect />
 
           <Routes>
-
             {/* Landing Page */}
             <Route path="/" element={<LandingPage />} />
 
@@ -27,15 +24,8 @@ export default function App() {
             {/* Login Page */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/schemes/:id" element={<SchemeDetails />} />
-
           </Routes>
-
         </BrowserRouter>
-
-=======
-        
-        <Home />
->>>>>>> Stashed changes
       </AuthProvider>
     </LanguageProvider>
   )
