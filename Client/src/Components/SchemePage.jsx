@@ -110,26 +110,26 @@ export default function SchemePage({ search = "" }) {
     <div className="flex bg-slate-50 min-h-screen">
 
       {/* ================= SIDEBAR ================= */}
-       <aside className="hidden md:block w-80 shrink-0 sticky top-20 h-[calc(100vh-5rem)]">
-        <div className="h-full rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col">
-          <div className="px-6 py-5 border-b border-slate-100">
+       <aside className="hidden md:block w-80 shrink-0 sticky top-20 h-[calc(100vh-5rem)] p-4">
+        <div className="h-full rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-100 flex flex-col">
+          <div className="px-6 py-5 border-b border-slate-100/80 bg-gradient-to-r from-slate-50 to-white rounded-t-2xl">
             <div className="flex items-center justify-between">
               <h2 className="font-semibold text-lg text-slate-800">
                 {t('schemes.filters')}
               </h2>
 
               {activeFilterCount > 0 && (
-                <span className="text-[11px] bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full font-semibold">
+                <span className="text-[11px] bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-semibold ring-1 ring-emerald-100">
                   {activeFilterCount} {t('schemes.active')}
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-slate-400 mt-1.5">
               {t('schemes.filtersDesc')}
             </p>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
+          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-3 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
             {/* STATE */}
             <FilterSection title={t('schemes.state')} count={stateFilter.length}>
               {states.map((s) => (
@@ -210,7 +210,7 @@ export default function SchemePage({ search = "" }) {
           </div>
 
           {activeFilterCount > 0 && (
-            <div className="px-6 py-4 border-t border-slate-100">
+            <div className="px-5 py-4 border-t border-slate-100/80 bg-slate-50/50 rounded-b-2xl">
               <button
                 onClick={() => {
                   setStateFilter([])
@@ -218,7 +218,7 @@ export default function SchemePage({ search = "" }) {
                   setCropFilter([])
                   setEligibilityFilter("all")
                 }}
-                className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition"
+                className="w-full py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 text-sm font-semibold transition-all duration-200 hover:border-slate-300"
               >
                 {t('schemes.clearFilters')}
               </button>
@@ -269,7 +269,7 @@ export default function SchemePage({ search = "" }) {
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="px-3 py-2 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 outline-none"
+              className="px-4 py-2.5 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 outline-none cursor-pointer hover:border-slate-300 transition-colors font-medium"
             >
               <option value="">{t('schemes.sortDefault')}</option>
               <option value="asc">{t('schemes.sortAZ')}</option>
@@ -321,58 +321,67 @@ function FilterSection({ title, count, children }) {
   const [open, setOpen] = useState(false)
 
   return (
-    <div className="border-b border-slate-100 pb-2">
+    <div className="rounded-xl bg-slate-50/50 overflow-hidden">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center justify-between w-full py-2 text-left"
+        className={`flex items-center justify-between w-full px-4 py-3 text-left transition-colors duration-200 ${
+          open ? "bg-slate-100/80" : "hover:bg-slate-100/50"
+        }`}
       >
         <div className="flex items-center gap-2">
-          <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+          <h3 className="text-sm font-semibold text-slate-700">
             {title}
           </h3>
           {count > 0 && (
-            <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-bold">
+            <span className="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold">
               {count}
             </span>
           )}
         </div>
-        <span className={`text-slate-400 text-xs transition-transform duration-200 ${open ? "rotate-180" : ""}`}>
+        <span className={`text-slate-400 text-[10px] transition-transform duration-300 ${open ? "rotate-180" : ""}`}>
           ▼
         </span>
       </button>
-      {open && (
-        <div className="space-y-0.5 pb-1">
+      <div className={`overflow-hidden transition-all duration-300 ease-out ${
+        open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+      }`}>
+        <div className="px-3 py-2 space-y-0.5 bg-white border-t border-slate-100/50">
           {children}
         </div>
-      )}
+      </div>
     </div>
   )
 }
 
 function CheckboxItem({ label, checked, onChange }) {
   return (
-    <label className="flex items-center gap-2.5 text-sm cursor-pointer py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors">
+    <label className={`flex items-center gap-3 text-sm cursor-pointer py-2 px-3 rounded-lg transition-all duration-200 ${
+      checked ? "bg-emerald-50 text-slate-800" : "hover:bg-slate-50 text-slate-600"
+    }`}>
       <input
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="w-4 h-4 accent-emerald-600 rounded"
+        className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
       />
-      <span className={checked ? "text-slate-800 font-medium" : "text-slate-600"}>{label}</span>
+      <span className={checked ? "font-medium" : ""}>{label}</span>
     </label>
   )
 }
 
 function RadioItem({ label, value, selected, onChange }) {
+  const isSelected = selected === value
   return (
-    <label className="flex items-center gap-2.5 text-sm cursor-pointer py-1 px-2 rounded-lg hover:bg-slate-50 transition-colors">
+    <label className={`flex items-center gap-3 text-sm cursor-pointer py-2 px-3 rounded-lg transition-all duration-200 ${
+      isSelected ? "bg-emerald-50 text-slate-800" : "hover:bg-slate-50 text-slate-600"
+    }`}>
       <input
         type="radio"
-        checked={selected === value}
+        checked={isSelected}
         onChange={() => onChange(value)}
-        className="w-4 h-4 accent-emerald-600"
+        className="w-4 h-4 accent-emerald-600 cursor-pointer"
       />
-      <span className={selected === value ? "text-slate-800 font-medium" : "text-slate-600"}>{label}</span>
+      <span className={isSelected ? "font-medium" : ""}>{label}</span>
     </label>
   )
 }

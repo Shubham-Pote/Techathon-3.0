@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react"
 import { FaMicrophone, FaPaperPlane, FaTimes, FaRedo, FaLeaf } from "react-icons/fa"
-import botImage from "../assets/features/image.png"
+import botImage from "../assets/features/bot-img.png"
 import { useTranslation } from "react-i18next"
 import api from "../utils/api"
 
@@ -116,19 +116,20 @@ export default function Chatbot() {
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-50 group flex items-center gap-0 hover:gap-3 transition-all duration-300"
+          className="fixed bottom-6 right-6 z-[9999] group flex items-center gap-0 hover:gap-3 transition-all duration-300 cursor-pointer"
           aria-label="Open Krishi Mitra"
+          style={{ pointerEvents: 'auto' }}
         >
           {/* Pill label — slides in on hover */}
-          <span className="overflow-hidden max-w-0 group-hover:max-w-[140px] transition-all duration-300 ease-in-out">
+          <span className="overflow-hidden max-w-0 group-hover:max-w-[220px] transition-all duration-300 ease-in-out">
             <span className="whitespace-nowrap bg-white text-green-700 font-semibold text-[13px] px-3 py-1.5 rounded-full shadow-md border border-green-100 mr-1">
-              Krishi Mitra
+              How can I help you?
             </span>
           </span>
 
           {/* Free image */}
-          <div className="relative shrink-0 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-200 drop-shadow-xl">
-            <img src={botImage} alt="Krishi Mitra" className="w-[64px] h-[64px] object-cover rounded-full border-2 border-white shadow-lg" />
+          <div className="relative shrink-0 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-200 drop-shadow-xl pointer-events-none">
+            <img src={botImage} alt="Krishi Mitra" className="w-[80px] h-auto object-contain pointer-events-none" />
             {/* Online dot */}
             <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-400 border-2 border-white rounded-full shadow" />
           </div>
@@ -145,9 +146,7 @@ export default function Chatbot() {
           <div className="bg-white border-b border-gray-100 px-5 py-3.5 flex items-center gap-3 shrink-0 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
             {/* Logo */}
             <div className="relative shrink-0">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-600 to-emerald-400 flex items-center justify-center shadow-sm">
-                <FaLeaf className="text-white" size={17} />
-              </div>
+              <img src={botImage} alt="Krishi Mitra" className="w-12 h-12 object-contain" />
               <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 border-2 border-white rounded-full" />
             </div>
 
