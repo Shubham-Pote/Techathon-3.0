@@ -143,9 +143,21 @@ export default function SchemeDetails() {
     <>
       <Navbar />
 
-      <div className="min-h-screen bg-gray-50 flex">
+      <div
+        className="min-h-screen bg-gray-50 flex relative"
+        style={{
+          backgroundImage: 'url(/ashok.png)',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center 120px',
+          backgroundSize: '420px',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        {/* Overlay to keep text readable */}
+        <div className="absolute inset-0 bg-gray-50/95 pointer-events-none" />
+
         {/* ===== SIDEBAR ===== */}
-        <aside className="hidden lg:block w-72 shrink-0">
+        <aside className="hidden lg:block w-72 shrink-0 relative z-10">
           <nav className="sticky top-20 py-12 pl-8 pr-6">
             <div className="mb-6">
               <p className="text-sm font-bold uppercase tracking-wider text-gray-400">
@@ -181,7 +193,7 @@ export default function SchemeDetails() {
         </aside>
 
         {/* ===== MAIN ===== */}
-        <main className="flex-1 max-w-[960px] px-4 sm:px-6 lg:px-16 py-6 sm:py-10 pb-24 sm:pb-32">
+        <main className="flex-1 max-w-[960px] px-4 sm:px-6 lg:px-16 py-6 sm:py-10 pb-24 sm:pb-32 relative z-10">
           <button
             onClick={() => navigate("/home")}
             className="inline-flex items-center gap-1.5 text-gray-600 hover:text-gray-900 text-sm font-medium mb-6 transition-colors"
