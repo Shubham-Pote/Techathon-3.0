@@ -1,0 +1,47 @@
+name: Build Succeeds on PR
+
+on:
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  build:
+    name: Build Client and Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: |
+            Client/package-lock.json
+            Server/package-lock.json
+
+      - name: Install Client dependencies
+        working-directory: Client
+        run: npm ci
+
+      - name: Build Client
+        working-directory: Client
+        run: npm run build
+
+      - name: Install Server dependencies
+        working-directory: Server
+        run: npm ci
+
+      - name: Generate Prisma Client
+        working-directory: Server
+        env:
+          DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+        run: npx prisma generate
+
+      - name: Build Server
+        working-directory: Server
+        run: npx tsc
