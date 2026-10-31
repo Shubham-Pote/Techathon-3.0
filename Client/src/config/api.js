@@ -1,5 +1,7 @@
-const DEFAULT_API_BASE_URL = "https://techathon-ry1m.onrender.com";
+const configuredApiBaseUrl = import.meta.env.VITE_API_URL?.trim();
 
-export const API_BASE_URL = (
-  import.meta.env.VITE_API_URL || DEFAULT_API_BASE_URL
-).replace(/\/+$/, "");
+if (!configuredApiBaseUrl) {
+  throw new Error("VITE_API_URL must be configured for the client build.");
+}
+
+export const API_BASE_URL = configuredApiBaseUrl.replace(/\/+$/, "");
