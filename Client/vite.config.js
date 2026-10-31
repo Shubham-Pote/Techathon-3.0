@@ -58,7 +58,7 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^http:\/\/localhost:3000\/schemes.*/i,
+            urlPattern: /^https:\/\/techathon-ry1m\.onrender\.com\/schemes.*/i,
             handler: 'NetworkFirst',
             options: {
               cacheName: 'api-cache',

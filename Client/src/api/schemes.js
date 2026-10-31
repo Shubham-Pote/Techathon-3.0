@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "../config/api"
+
 function headers() {
   const token = localStorage.getItem("token")
 
@@ -9,7 +11,7 @@ function headers() {
 
 export async function fetchSchemes() {
   try {
-    const res = await fetch("/schemes", {
+    const res = await fetch(`${API_BASE_URL}/schemes`, {
       headers: headers()
     })
 
@@ -24,7 +26,7 @@ export async function fetchSchemes() {
 
 export async function fetchSchemeById(id) {
   try {
-    const res = await fetch(`/schemes/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/schemes/${id}`, {
       headers: headers()
     })
 

@@ -1,7 +1,8 @@
 import axios from "axios"
+import { API_BASE_URL } from "../config/api"
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://techathon-3-0-3mtp.vercel.app",
+  baseURL: API_BASE_URL,
   withCredentials: true,
 })
 

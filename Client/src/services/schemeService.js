@@ -1,5 +1,6 @@
-const API_BASE = import.meta.env.VITE_API_URL || "https://techathon-3-0-3mtp.vercel.app";
-const API_URL = `${API_BASE}/schemes`;
+import { API_BASE_URL } from "../config/api";
+
+const API_URL = `${API_BASE_URL}/schemes`;
 
 // Get all schemes
 export async function getAllSchemes() {
