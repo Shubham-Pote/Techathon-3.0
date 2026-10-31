@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import axios from 'axios';
 import prisma from '../config/db.js';
-import { SchemeCategory, CropType } from '../generated/prisma/client.js';
+import { SchemeCategory, CropType } from '@prisma/client';
 
 const scrapeSchemes = async () => {
   console.log('\n========================================');
