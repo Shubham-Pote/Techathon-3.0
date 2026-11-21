@@ -242,7 +242,7 @@ export default function DownloadButton({ scheme, details, benefits, proc }) {
   return (
     <button
       onClick={handleDownload}
-      className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white px-4 py-2 rounded-lg text-sm font-semibold transition shadow-sm"
+      className="kc-button kc-button-outline"
     >
       {/* Download arrow icon */}
       <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0">

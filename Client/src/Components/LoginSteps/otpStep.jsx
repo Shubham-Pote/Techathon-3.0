@@ -19,7 +19,8 @@ export default function OtpStep({ phone, devOtp, onSuccess }) {
     }
   }
 
-  const handleVerify = async () => {
+  const handleVerify = async (event) => {
+    event.preventDefault()
     const finalOtp = otp.join("")
 
     if (finalOtp.length !== 6) {
@@ -49,7 +50,7 @@ export default function OtpStep({ phone, devOtp, onSuccess }) {
   }
 
   return (
-    <div className="space-y-6 text-center">
+    <form onSubmit={handleVerify} className="space-y-6 text-center">
       <div className="text-4xl">🔐</div>
       <p className="text-sm text-gray-500">Enter 6 digit code</p>
 
@@ -60,30 +61,31 @@ export default function OtpStep({ phone, devOtp, onSuccess }) {
         </div>
       )}
 
-      <div className="flex justify-center gap-3 flex-wrap">
+      <div className="flex justify-center gap-1.5 sm:gap-3 flex-wrap">
         {otp.map((digit, index) => (
           <input
             key={index}
             id={`otp-${index}`}
             value={digit}
+            aria-label={`Code digit ${index + 1}`}
             maxLength={1}
             inputMode="numeric"
             autoFocus={index === 0}
             onChange={(e) => handleChange(e.target.value, index)}
-            className="w-12 h-12 text-center text-lg bg-white border border-gray-200 rounded-xl shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none"
+            className="w-9 sm:w-12 h-12 text-center text-lg bg-white border border-gray-200 rounded-xl shadow-sm focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none"
           />
         ))}
       </div>
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && <p className="text-red-700 text-sm" role="alert">{error}</p>}
 
       <button
-        onClick={handleVerify}
+        type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 rounded-2xl font-semibold shadow-lg"
+        className="kc-button w-full"
       >
         {loading ? "Verifying..." : "Verify OTP"}
       </button>
-    </div>
+    </form>
   )
 }

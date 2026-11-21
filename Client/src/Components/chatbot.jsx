@@ -1,3 +1,4 @@
+import { FiMessageCircle } from "react-icons/fi"
 import { useState, useRef, useEffect } from "react"
 import { FaMicrophone, FaPaperPlane, FaTimes, FaRedo, FaLeaf } from "react-icons/fa"
 import botImage from "../assets/features/bot-img.png"
@@ -112,27 +113,15 @@ export default function Chatbot() {
 
   return (
     <>
-      {/* Floating Trigger */}
       {!open && (
         <button
+          type="button"
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-[9999] group flex items-center gap-0 hover:gap-3 transition-all duration-300 cursor-pointer"
+          className="kc-chat-trigger"
           aria-label="Open Krishi Mitra"
-          style={{ pointerEvents: 'auto' }}
         >
-          {/* Pill label — slides in on hover */}
-          <span className="overflow-hidden max-w-0 group-hover:max-w-[220px] transition-all duration-300 ease-in-out">
-            <span className="whitespace-nowrap bg-white text-green-700 font-semibold text-[13px] px-3 py-1.5 rounded-full shadow-md border border-green-100 mr-1">
-              How can I help you?
-            </span>
-          </span>
-
-          {/* Free image */}
-          <div className="relative shrink-0 group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-200 drop-shadow-xl pointer-events-none">
-            <img src={botImage} alt="Krishi Mitra" className="w-[80px] h-auto object-contain pointer-events-none" />
-            {/* Online dot */}
-            <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-400 border-2 border-white rounded-full shadow" />
-          </div>
+          <FiMessageCircle aria-hidden="true" />
+          <span>Krishi Mitra</span>
         </button>
       )}
 
@@ -140,7 +129,7 @@ export default function Chatbot() {
       {open && (
         <div
           style={{ width: "min(460px, calc(100vw - 32px))", maxHeight: "calc(100vh - 32px)" }}
-          className="fixed bottom-4 right-4 z-50 bg-white rounded-2xl shadow-[0_16px_70px_rgba(0,0,0,0.20)] flex flex-col overflow-hidden border border-gray-200"
+          className="fixed bottom-4 right-4 z-[60] bg-white rounded-2xl shadow-[0_16px_70px_rgba(0,0,0,0.20)] flex flex-col overflow-hidden border border-gray-200"
         >
           {/* ── Header (myScheme-style: white bg) ── */}
           <div className="bg-white border-b border-gray-100 px-5 py-3.5 flex items-center gap-3 shrink-0 shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
@@ -173,6 +162,7 @@ export default function Chatbot() {
                 <FaRedo size={11} />
               </button>
               <button
+                aria-label="Close Krishi Mitra"
                 onClick={() => setOpen(false)}
                 className="text-gray-400 hover:text-gray-700 hover:bg-gray-100 p-2 rounded-lg transition"
               >

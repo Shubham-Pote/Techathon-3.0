@@ -23,6 +23,7 @@ export default function LanguageToggle({ transparent = false }) {
   const { i18n } = useTranslation()
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
+  const triggerRef = useRef(null)
 
   const current = LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0]
 
@@ -37,13 +38,23 @@ export default function LanguageToggle({ transparent = false }) {
 
   const select = (code) => {
     i18n.changeLanguage(code)
+    document.documentElement.lang = code
     setOpen(false)
+    triggerRef.current.focus()
   }
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative" ref={ref} onKeyDown={(event) => {
+      if (event.key === "Escape" && open) {
+        setOpen(false)
+        triggerRef.current.focus()
+      }
+    }}>
       {/* Trigger button */}
       <button
+        ref={triggerRef}
+        aria-label={`Language: ${current.label}`}
+        aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
         className={`flex items-center gap-1.5 sm:gap-2 px-3 py-2 rounded-xl border transition-all text-sm font-medium ${
           transparent
@@ -85,6 +96,7 @@ export default function LanguageToggle({ transparent = false }) {
               <button
                 key={l.code}
                 onClick={() => select(l.code)}
+                aria-pressed={isActive}
                 className={`w-full text-left px-4 py-2.5 flex items-center gap-3 text-sm transition-colors
                   ${isActive
                     ? "bg-emerald-50 text-emerald-700 font-semibold"

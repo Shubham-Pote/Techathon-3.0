@@ -4,9 +4,9 @@ import api from "../../utils/api"
 export default function PhoneStep({ phone, setPhone, next }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [devOtp, setDevOtp] = useState(null)
 
-  const handleSendOtp = async () => {
+  const handleSendOtp = async (event) => {
+    event.preventDefault()
     if (!phone || phone.length !== 10) {
       setError("Enter valid 10 digit mobile number")
       return
@@ -15,14 +15,12 @@ export default function PhoneStep({ phone, setPhone, next }) {
     try {
       setLoading(true)
       setError("")
-      setDevOtp(null)
 
       const res = await api.post("/auth/request-otp", {
         mobile: phone,
       })
 
       // Show OTP on screen (dev/demo mode — no real SMS gateway)
-      if (res.data.otp) setDevOtp(res.data.otp)
 
       next(res.data.otp || null)
     } catch (err) {
@@ -33,28 +31,31 @@ export default function PhoneStep({ phone, setPhone, next }) {
   }
 
   return (
-    <div className="space-y-6">
-      <p className="text-gray-700 text-sm">
+    <form onSubmit={handleSendOtp} className="space-y-6">
+      <label className="block mb-2 text-gray-700 text-sm" htmlFor="sign-in-phone">
         Enter mobile number to continue
-      </p>
+      </label>
 
       <input
         type="tel"
+        id="sign-in-phone"
+        autoComplete="tel-national"
+        inputMode="numeric"
         value={phone}
         onChange={(e) => setPhone(e.target.value)}
         placeholder="9876543210"
         className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 shadow-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition-all"
       />
 
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && <p className="text-red-700 text-sm" role="alert">{error}</p>}
 
       <button
-        onClick={handleSendOtp}
+        type="submit"
         disabled={loading}
-        className="w-full bg-gradient-to-r from-emerald-600 to-green-600 text-white py-4 rounded-2xl font-semibold shadow-lg"
+        className="kc-button w-full"
       >
         {loading ? "Sending..." : "Send OTP"}
       </button>
-    </div>
+    </form>
   )
 }

@@ -11,7 +11,8 @@ export default function HelpCenterButton({ transparent = false }) {
   const [loading, setLoading] = useState(false)
   const [expanded, setExpanded] = useState(false)
   const [activeTab, setActiveTab] = useState("agriculture")
-  const [translated, setTranslated] = useState({})
+  const [translations, setTranslated] = useState(null)
+  const translated = translations?.lang === lang ? translations : {}
   const dropdownRef = useRef(null)
 
   // Close dropdown when clicking outside
@@ -25,28 +26,9 @@ export default function HelpCenterButton({ transparent = false }) {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  // Fetch data when expanded
-  useEffect(() => {
-    if (expanded && !data && !loading) {
-      fetchHelpCenters()
-    }
-  }, [expanded])
-
   // Translate labels
   useEffect(() => {
-    if (lang === "en") {
-      setTranslated({
-        title: "Nearby Help Centers",
-        agriculture: "Agriculture Office",
-        bank: "Banks",
-        serviceCenter: "Service Centers",
-        noResults: "No places found nearby",
-        loading: "Finding nearby centers...",
-        directions: "Get Directions",
-        km: "km away",
-      })
-      return
-    }
+    if (lang === "en") return
 
     let cancelled = false
     Promise.all([
@@ -60,7 +42,7 @@ export default function HelpCenterButton({ transparent = false }) {
       translateText("km away", lang),
     ]).then(([title, agriculture, bank, serviceCenter, noResults, loadingText, directions, km]) => {
       if (!cancelled) {
-        setTranslated({ title, agriculture, bank, serviceCenter, noResults, loading: loadingText, directions, km })
+        setTranslated({ lang, title, agriculture, bank, serviceCenter, noResults, loading: loadingText, directions, km })
       }
     })
 
@@ -87,7 +69,12 @@ export default function HelpCenterButton({ transparent = false }) {
     <div className="relative" ref={dropdownRef}>
       {/* Help Center Button */}
       <button
-        onClick={() => setExpanded(!expanded)}
+        aria-label="Nearby help centers"
+        aria-expanded={expanded}
+        onClick={() => {
+          setExpanded(!expanded)
+          if (!expanded && !data && !loading) fetchHelpCenters()
+        }}
         className={`
           flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm
           border transition-all font-medium
@@ -107,7 +94,7 @@ export default function HelpCenterButton({ transparent = false }) {
 
       {/* Expanded Dropdown */}
       {expanded && (
-        <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50">
+        <div className="kc-help-panel absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50">
           {/* Header */}
           <div className="bg-gradient-to-r from-emerald-50 to-teal-50 px-4 py-3 border-b border-slate-100">
             <h3 className="font-semibold text-slate-800 text-sm flex items-center gap-2">

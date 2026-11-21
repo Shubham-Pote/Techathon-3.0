@@ -6,23 +6,17 @@ export default function SchemeContent({
   scheme,
   proc,
   details,
-  benefits,
-  detailsRef,
-  benefitsRef,
-  eligibilityRef,
-  processRef,
-  docsRef
+  benefits
 }) {
   const { t, i18n } = useTranslation()
   const lang = i18n.language
 
-  const [tx, setTx] = useState(null)
-  const [translating, setTranslating] = useState(false)
+  const [translation, setTx] = useState(null)
+  const tx = translation?.lang === lang ? translation : null
 
   useEffect(() => {
-    if (lang === "en") { setTx(null); setTranslating(false); return }
+    if (lang === "en") return
     let cancelled = false
-    setTranslating(true)
     const ad = benefits.assistance_details ?? []
     Promise.all([
       translateText(details.description, lang),
@@ -39,6 +33,7 @@ export default function SchemeContent({
     ]).then(([desc, highlights, disbursing, eligibility, steps, paymentNote, documents, comps, assists, limits, agcs]) => {
       if (cancelled) return
       setTx({
+        lang,
         description: desc,
         technical_highlights: highlights,
         disbursing_authority: disbursing,
@@ -54,8 +49,7 @@ export default function SchemeContent({
           implementing_agency: agcs[i],
         })),
       })
-      setTranslating(false)
-    }).catch(() => { if (!cancelled) setTranslating(false) })
+    })
     return () => { cancelled = true }
   }, [lang, details, benefits, proc, scheme])
 
@@ -68,19 +62,10 @@ export default function SchemeContent({
   const documents        = tx?.documents               ?? scheme.documents_required
   const assistanceDetails = tx?.assistance_details     ?? benefits.assistance_details
 
-  if (translating) {
-    return (
-      <div className="flex flex-col items-center justify-center py-20 gap-3">
-        <div className="w-8 h-8 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
-        <p className="text-slate-400 text-sm">{t('schemeDetail.loading')}</p>
-      </div>
-    )
-  }
-
   return (
     <>
       {/* ─── DETAILS ─── */}
-      <section ref={detailsRef} id="details" className="mb-14">
+      <section tabIndex={-1} id="details" className="mb-14">
         <h2 className="text-2xl font-bold text-gray-900 mb-5">{t('schemeDetail.content.detailsHeading')}</h2>
         <p className="text-[16px] text-gray-700 leading-[1.9]">
           {desc || t('schemeDetail.content.noDescription')}
@@ -99,7 +84,7 @@ export default function SchemeContent({
       </section>
 
       {/* ─── BENEFITS ─── */}
-      <section ref={benefitsRef} id="benefits" className="mb-14">
+      <section tabIndex={-1} id="benefits" className="mb-14">
         <h2 className="text-2xl font-bold text-gray-900 mb-5">{t('schemeDetail.content.benefitsHeading')}</h2>
 
         {assistanceDetails?.length > 0 ? (
@@ -131,7 +116,7 @@ export default function SchemeContent({
       </section>
 
       {/* ─── ELIGIBILITY ─── */}
-      <section ref={eligibilityRef} id="eligibility" className="mb-14">
+      <section tabIndex={-1} id="eligibility" className="mb-14">
         <h2 className="text-2xl font-bold text-gray-900 mb-5">{t('schemeDetail.content.eligibilityHeading')}</h2>
 
         {eligibility?.length > 0 ? (
@@ -149,7 +134,7 @@ export default function SchemeContent({
       </section>
 
       {/* ─── APPLICATION PROCESS ─── */}
-      <section ref={processRef} id="process" className="mb-14">
+      <section tabIndex={-1} id="process" className="mb-14">
         <h2 className="text-2xl font-bold text-gray-900 mb-5">{t('schemeDetail.content.processHeading')}</h2>
 
         {/* Mode & Portal */}
@@ -221,7 +206,7 @@ export default function SchemeContent({
       </section>
 
       {/* ─── DOCUMENTS ─── */}
-      <section ref={docsRef} id="docs" className="mb-14">
+      <section tabIndex={-1} id="docs" className="mb-14">
         <h2 className="text-2xl font-bold text-gray-900 mb-5">{t('schemeDetail.content.docsHeading')}</h2>
 
         {documents?.length > 0 ? (

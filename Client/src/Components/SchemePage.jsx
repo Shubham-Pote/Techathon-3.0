@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react"
+import { FiBookmark, FiChevronDown, FiSliders } from "react-icons/fi"
 import SchemeCard from "./SchemeCard"
 import { getAllSchemes } from "../services/schemeService"
 import { useAuth } from "../context/AuthContext"
@@ -6,20 +7,22 @@ import { useBookmarks } from "../context/BookmarkContext"
 import { isEligible } from "../utils/eligibility"
 import { useTranslation } from "react-i18next"
 
-export default function SchemePage({ search = "" }) {
+export default function SchemePage({ search = "", category }) {
   const { t } = useTranslation()
 
   const [schemes, setSchemes] = useState([])
 
   const [stateFilter, setStateFilter] = useState([])
-  const [categoryFilter, setCategoryFilter] = useState([])
+  const [categoryFilter, setCategoryFilter] = useState(category ? [category] : [])
   const [cropFilter, setCropFilter] = useState([])
   const [eligibilityFilter, setEligibilityFilter] = useState("all")
   const [showBookmarks, setShowBookmarks] = useState(false)
 
   const [sortOrder, setSortOrder] = useState("")
-  const [currentPage, setCurrentPage] = useState(1)
+  const [pagination, setPagination] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [failed, setFailed] = useState(false)
+  const [request, setRequest] = useState(0)
 
   const schemesPerPage = 10
 
@@ -27,29 +30,23 @@ export default function SchemePage({ search = "" }) {
   const { bookmarks } = useBookmarks()
   const farmerProfile = user?.profile
 
-  /* ================= FETCH ALL SCHEMES ONCE ================= */
   useEffect(() => {
-    async function fetchSchemes() {
-      try {
-        const res = await getAllSchemes()
-        if (res?.success && Array.isArray(res.data)) {
-          setSchemes(res.data)
-        } else {
-          setSchemes([])
-        }
-      } catch (err) {
-        console.error("Scheme fetch error:", err)
-        setSchemes([])
-      }
-      setLoading(false)
-    }
-    fetchSchemes()
-  }, [])
+    let cancelled = false
 
-  /* ================= RESET PAGE on filter/search change ================= */
-  useEffect(() => {
-    setCurrentPage(1)
-  }, [stateFilter, categoryFilter, cropFilter, eligibilityFilter, sortOrder, search, showBookmarks])
+    getAllSchemes()
+      .then((response) => {
+        if (!response?.success || !Array.isArray(response.data)) throw new Error("Invalid scheme response")
+        if (!cancelled) setSchemes(response.data)
+      })
+      .catch(() => {
+        if (!cancelled) setFailed(true)
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false)
+      })
+
+    return () => { cancelled = true }
+  }, [request])
 
   /* ================= UNIQUE VALUES FOR FILTERS ================= */
   const states = [...new Set(schemes.map((s) => s?.state).filter(Boolean))]
@@ -93,6 +90,11 @@ export default function SchemePage({ search = "" }) {
 
   /* ================= PAGINATION ================= */
   const totalPages = Math.ceil(filtered.length / schemesPerPage)
+  const currentPage = pagination?.results === filtered ? pagination.page : 1
+  const setCurrentPage = (page) => {
+    setPagination({ results: filtered, page })
+    document.getElementById("scheme-results").focus()
+  }
   const paginatedSchemes = filtered.slice(
     (currentPage - 1) * schemesPerPage,
     currentPage * schemesPerPage
@@ -105,31 +107,14 @@ export default function SchemePage({ search = "" }) {
     cropFilter.length +
     (eligibilityFilter !== "all" ? 1 : 0)
 
-  /* ================= UI ================= */
   return (
-    <div className="flex bg-slate-50 min-h-screen">
-
-      {/* ================= SIDEBAR ================= */}
-       <aside className="hidden md:block w-80 shrink-0 sticky top-20 h-[calc(100vh-5rem)] p-4">
-        <div className="h-full rounded-2xl border border-slate-200/60 bg-white shadow-sm shadow-slate-100 flex flex-col">
-          <div className="px-6 py-5 border-b border-slate-100/80 bg-gradient-to-r from-slate-50 to-white rounded-t-2xl">
-            <div className="flex items-center justify-between">
-              <h2 className="font-semibold text-lg text-slate-800">
-                {t('schemes.filters')}
-              </h2>
-
-              {activeFilterCount > 0 && (
-                <span className="text-[11px] bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full font-semibold ring-1 ring-emerald-100">
-                  {activeFilterCount} {t('schemes.active')}
-                </span>
-              )}
-            </div>
-            <p className="text-xs text-slate-400 mt-1.5">
-              {t('schemes.filtersDesc')}
-            </p>
-          </div>
-
-          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-3 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+    <div className="kc-shell kc-directory">
+      <aside className="kc-filters" aria-labelledby="filters-heading">
+        <div className="kc-filter-heading">
+          <h2 id="filters-heading"><FiSliders aria-hidden="true" /> {t("schemes.filters")}</h2>
+          <p>{t("schemes.filtersDesc")}</p>
+        </div>
+        <div className="kc-filter-options">
             {/* STATE */}
             <FilterSection title={t('schemes.state')} count={stateFilter.length}>
               {states.map((s) => (
@@ -209,67 +194,46 @@ export default function SchemePage({ search = "" }) {
             )}
           </div>
 
-          {activeFilterCount > 0 && (
-            <div className="px-5 py-4 border-t border-slate-100/80 bg-slate-50/50 rounded-b-2xl">
-              <button
-                onClick={() => {
-                  setStateFilter([])
-                  setCategoryFilter([])
-                  setCropFilter([])
-                  setEligibilityFilter("all")
-                }}
-                className="w-full py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 text-sm font-semibold transition-all duration-200 hover:border-slate-300"
-              >
-                {t('schemes.clearFilters')}
-              </button>
-            </div>
-          )}
-        </div>
+        {activeFilterCount > 0 && (
+          <button
+            className="kc-text-link kc-reset"
+            onClick={() => {
+              setStateFilter([])
+              setCategoryFilter([])
+              setCropFilter([])
+              setEligibilityFilter("all")
+            }}
+          >
+            {t("schemes.clearFilters")} ({activeFilterCount})
+          </button>
+        )}
       </aside>
 
-      {/* ================= CONTENT ================= */}
-      <main className="flex-1 px-3 sm:px-6 py-4 sm:py-6 lg:px-8">
-
-        {/* Stats bar */}
-       
-
-        {/* Title + Sort */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0 mb-4 sm:mb-5">
+      <section className="kc-results" aria-labelledby="scheme-results">
+        <div className="kc-results-bar">
           <div>
-            <h1 className="text-lg sm:text-xl font-bold text-slate-800">
-              {t('schemes.heading')}
-            </h1>
-            {!loading && (
-              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                🌾 More than 100 schemes available
-              </p>
+            <h2 id="scheme-results" tabIndex={-1}>{t("schemes.results")}</h2>
+            {!loading && !failed && (
+              <p role="status">{t("schemes.showing", { n: paginatedSchemes.length, total: filtered.length })}</p>
             )}
           </div>
-
-          <div className="flex items-center gap-2">
-            {/* Bookmarks toggle */}
+          <div className="kc-results-actions">
             {user && (
               <button
-                onClick={() => setShowBookmarks((v) => !v)}
-                className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-xl border font-semibold transition-all ${
-                  showBookmarks
-                    ? "bg-amber-50 border-amber-300 text-amber-700"
-                    : "bg-white border-slate-200 text-slate-600 hover:border-amber-300 hover:text-amber-600"
-                }`}
+                className="kc-button kc-button-outline"
+                onClick={() => setShowBookmarks((value) => !value)}
+                aria-label={t("schemes.bookmarks")}
+                aria-pressed={showBookmarks}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={showBookmarks ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                </svg>
-                {bookmarks.length > 0 && (
-                  <span className="text-xs bg-amber-200/60 text-amber-800 px-1.5 py-0.5 rounded-full leading-none">{bookmarks.length}</span>
-                )}
+                <FiBookmark aria-hidden="true" fill={showBookmarks ? "currentColor" : "none"} />
+                {bookmarks.length > 0 && bookmarks.length}
               </button>
             )}
-
             <select
+              aria-label={t("schemes.sortDefault")}
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
-              className="px-4 py-2.5 text-sm border border-slate-200 rounded-xl bg-white text-slate-700 focus:ring-2 focus:ring-emerald-100 focus:border-emerald-400 outline-none cursor-pointer hover:border-slate-300 transition-colors font-medium"
+              className="kc-sort"
             >
               <option value="">{t('schemes.sortDefault')}</option>
               <option value="asc">{t('schemes.sortAZ')}</option>
@@ -279,13 +243,22 @@ export default function SchemePage({ search = "" }) {
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
+          <div className="kc-empty" role="status">
             <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
             <p className="text-slate-500 text-sm">{t('schemes.loading')}</p>
           </div>
+        ) : failed ? (
+          <div className="kc-empty" role="alert">
+            <p>{t("schemes.loadError")}</p>
+            <button className="kc-button" onClick={() => {
+              setLoading(true)
+              setFailed(false)
+              setRequest((value) => value + 1)
+            }}>{t("schemes.retry")}</button>
+          </div>
         ) : (
           <>
-            <div className="space-y-3">
+            <div className="kc-cards">
               {paginatedSchemes.map((s) => (
                 <SchemeCard
                   key={s?.scheme_id}
@@ -294,9 +267,9 @@ export default function SchemePage({ search = "" }) {
               ))}
 
               {filtered.length === 0 && (
-                <div className="text-center py-16">
+                <div className="kc-empty">
                   <p className="text-slate-600 font-medium">{t('schemes.noResults')}</p>
-                  <p className="text-sm text-slate-400 mt-1">{t('schemes.noResultsHint')}</p>
+                  <p className="text-sm text-slate-600">{t('schemes.noResultsHint')}</p>
                 </div>
               )}
             </div>
@@ -310,7 +283,7 @@ export default function SchemePage({ search = "" }) {
             )}
           </>
         )}
-      </main>
+      </section>
     </div>
   )
 }
@@ -318,38 +291,14 @@ export default function SchemePage({ search = "" }) {
 /* ================= REUSABLE COMPONENTS ================= */
 
 function FilterSection({ title, count, children }) {
-  const [open, setOpen] = useState(false)
-
   return (
-    <div className="rounded-xl bg-slate-50/50 overflow-hidden">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className={`flex items-center justify-between w-full px-4 py-3 text-left transition-colors duration-200 ${
-          open ? "bg-slate-100/80" : "hover:bg-slate-100/50"
-        }`}
-      >
-        <div className="flex items-center gap-2">
-          <h3 className="text-sm font-semibold text-slate-700">
-            {title}
-          </h3>
-          {count > 0 && (
-            <span className="text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded-full font-bold">
-              {count}
-            </span>
-          )}
-        </div>
-        <span className={`text-slate-400 text-[10px] transition-transform duration-300 ${open ? "rotate-180" : ""}`}>
-          ▼
-        </span>
-      </button>
-      <div className={`overflow-hidden transition-all duration-300 ease-out ${
-        open ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-      }`}>
-        <div className="px-3 py-2 space-y-0.5 bg-white border-t border-slate-100/50">
-          {children}
-        </div>
-      </div>
-    </div>
+    <details className="kc-filter">
+      <summary>
+        <span>{title} {count > 0 && <span className="kc-filter-count">{count}</span>}</span>
+        <FiChevronDown aria-hidden="true" />
+      </summary>
+      <div>{children}</div>
+    </details>
   )
 }
 
@@ -377,6 +326,7 @@ function RadioItem({ label, value, selected, onChange }) {
     }`}>
       <input
         type="radio"
+        name="eligibility"
         checked={isSelected}
         onChange={() => onChange(value)}
         className="w-4 h-4 accent-emerald-600 cursor-pointer"
@@ -389,11 +339,11 @@ function RadioItem({ label, value, selected, onChange }) {
 function Pagination({ currentPage, totalPages, setCurrentPage }) {
   const { t } = useTranslation()
   return (
-    <div className="flex items-center justify-center gap-2 mt-8">
+    <div className="flex flex-wrap items-center justify-center gap-2 mt-8">
 
       <button
         disabled={currentPage === 1}
-        onClick={() => setCurrentPage((p) => p - 1)}
+        onClick={() => setCurrentPage(currentPage - 1)}
         className="px-4 py-2 text-sm border border-slate-200 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition font-medium text-slate-700"
       >
         {t('schemes.prev')}
@@ -414,6 +364,7 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
           return (
             <button
               key={page}
+              aria-current={currentPage === page ? "page" : undefined}
               onClick={() => setCurrentPage(page)}
               className={`w-9 h-9 text-sm rounded-lg font-medium transition ${
                 currentPage === page
@@ -429,7 +380,7 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
 
       <button
         disabled={currentPage === totalPages}
-        onClick={() => setCurrentPage((p) => p + 1)}
+        onClick={() => setCurrentPage(currentPage + 1)}
         className="px-4 py-2 text-sm border border-slate-200 rounded-xl bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition font-medium text-slate-700"
       >
         {t('schemes.next')}

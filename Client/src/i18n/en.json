@@ -1,5 +1,7 @@
 {
   "nav": {
+    "primary": "Main navigation",
+    "skipToMain": "Skip to main content",
     "login": "Login",
     "logout": "Logout",
     "schemes": "Schemes",
@@ -9,13 +11,17 @@
     "checkEligibility": "Check Eligibility"
   },
   "hero": {
-    "title1": "Find the Right Scheme",
-    "title2": "for Your Farm",
+    "title1": "Find the right scheme",
+    "title2": "for your farm.",
     "subtitle": "Search across government agricultural schemes, subsidies, and insurance programs",
-    "searchPlaceholder": "Enter scheme name to search...",
+    "searchPlaceholder": "Search by name or topic",
     "searchBtn": "Search"
   },
   "schemes": {
+    "results": "Search results",
+    "bookmarks": "Saved schemes",
+    "loadError": "We couldn't load the scheme directory.",
+    "retry": "Try again",
     "heading": "Available Schemes",
     "showing": "Showing {{n}} of {{total}} schemes",
     "filters": "Filters",
@@ -39,6 +45,9 @@
     "next": "Next \u2192"
   },
   "card": {
+    "viewDetails": "View details",
+    "bookmark": "Save scheme",
+    "removeBookmark": "Remove saved scheme",
     "eligible": "\u2713 Eligible",
     "notEligible": "Not Eligible",
     "financialAssistance": "Financial Assistance",
@@ -49,6 +58,7 @@
     "noDescription": "No description available"
   },
   "schemeDetail": {
+    "loadError": "We couldn't load this scheme.",
     "loading": "Loading...",
     "schemeSection": "Scheme Section",
     "back": "\u2190 Back to Schemes",
@@ -83,8 +93,13 @@
     }
   },
   "landing": {
+    "farmSupport": "Farm support in India",
+    "supportTypes": "Browse by type of support",
+    "subsidies": "Subsidies",
+    "farmerWelfare": "Farmer welfare",
+    "applicationGuide": "Review the documents and steps before applying on the scheme's portal.",
     "heroTitle": "Krishiculture",
-    "heroSubtitle": "Simplifying access to government schemes, insurance, and financial support for farmers through minimal input and smart technology.",
+    "heroSubtitle": "Explore government subsidies, crop insurance and financial support for your farm. Check eligibility and find out how to apply.",
     "checkYourEligibility": "Check Your Eligibility",
     "exploreSchemes": "Explore Schemes",
     "heroNote": "No complex forms. No confusion. Just the right support.",
@@ -148,8 +163,8 @@
   },
   "auth": {
     "loginTitle": "Farmer Login",
-    "loginSubtitle": "Secure & quick access",
-    "welcomeTitle": "Welcome Farmer",
+    "loginSubtitle": "Sign in with your mobile number to check eligibility and save schemes.",
+    "welcomeTitle": "Find support for your farm.",
     "welcomeDesc": "Access government schemes, benefits, and support designed especially for you.",
     "empoweringBadge": "Empowering Farmers Digitally",
     "stepPhone": "Phone",
