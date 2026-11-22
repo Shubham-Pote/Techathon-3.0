@@ -11,7 +11,8 @@ const LANG_MAP = {
 export default function SpeakOnSelect() {
   const { i18n } = useTranslation()
   const [popup, setPopup] = useState(null)   // { x, y, text }
-  const [speaking, setSpeaking] = useState(false)
+  const [speechLanguage, setSpeechLanguage] = useState(null)
+  const speaking = speechLanguage === i18n.language
   const popupRef = useRef(null)
 
   /* ── Position popup above the selection ── */
@@ -40,14 +41,14 @@ export default function SpeakOnSelect() {
     if (popupRef.current?.contains(e.target)) return
     setPopup(null)
     window.speechSynthesis?.cancel()
-    setSpeaking(false)
+    setSpeechLanguage(null)
   }, [])
 
   /* ── Hide popup on scroll so it doesn't drift ── */
   const handleScroll = useCallback(() => {
     setPopup(null)
     window.speechSynthesis?.cancel()
-    setSpeaking(false)
+    setSpeechLanguage(null)
   }, [])
 
   useEffect(() => {
@@ -64,26 +65,25 @@ export default function SpeakOnSelect() {
   /* ── Stop speech when language changes ── */
   useEffect(() => {
     window.speechSynthesis?.cancel()
-    setSpeaking(false)
   }, [i18n.language])
 
   /* ── Speak ── */
   const speak = () => {
-    if (!popup?.text) return
+    if (!popup?.text || !window.speechSynthesis) return
     window.speechSynthesis.cancel()
     const utter = new SpeechSynthesisUtterance(popup.text)
     utter.lang  = LANG_MAP[i18n.language] ?? "en-IN"
     utter.rate  = 0.95
     utter.pitch = 1
-    utter.onstart = () => setSpeaking(true)
-    utter.onend   = () => setSpeaking(false)
-    utter.onerror = () => setSpeaking(false)
+    utter.onstart = () => setSpeechLanguage(i18n.language)
+    utter.onend   = () => setSpeechLanguage(null)
+    utter.onerror = () => setSpeechLanguage(null)
     window.speechSynthesis.speak(utter)
   }
 
   const stop = () => {
     window.speechSynthesis?.cancel()
-    setSpeaking(false)
+    setSpeechLanguage(null)
   }
 
   if (!popup) return null
@@ -117,7 +117,7 @@ export default function SpeakOnSelect() {
           </span>
           <span className="text-emerald-300">Speaking…</span>
           <button
-            onMouseDown={(e) => { e.stopPropagation(); stop() }}
+            onClick={stop}
             className="ml-0.5 text-red-400 hover:text-red-200 leading-none transition"
             title="Stop"
           >
@@ -126,7 +126,7 @@ export default function SpeakOnSelect() {
         </>
       ) : (
         <button
-          onMouseDown={(e) => { e.stopPropagation(); speak() }}
+          onClick={speak}
           className="flex items-center gap-1.5 hover:text-emerald-300 transition"
           title="Click to speak selected text"
         >

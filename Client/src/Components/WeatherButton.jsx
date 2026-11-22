@@ -10,7 +10,7 @@ export default function WeatherButton() {
   const [weather, setWeather] = useState(null)
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState(false)
-  const [translatedRecs, setTranslatedRecs] = useState([])
+  const [translation, setTranslation] = useState(null)
   const dropdownRef = useRef(null)
 
   useEffect(() => {
@@ -36,15 +36,7 @@ export default function WeatherButton() {
 
   // Translate recommendations
   useEffect(() => {
-    if (!weather?.recommendations?.length) {
-      setTranslatedRecs([])
-      return
-    }
-
-    if (lang === "en") {
-      setTranslatedRecs(weather.recommendations)
-      return
-    }
+    if (lang === "en" || !weather?.recommendations?.length) return
 
     let cancelled = false
     Promise.all(
@@ -53,13 +45,15 @@ export default function WeatherButton() {
         message: await translateText(rec.message, lang),
       }))
     ).then((translated) => {
-      if (!cancelled) setTranslatedRecs(translated)
+      if (!cancelled) setTranslation({ lang, weather, items: translated })
     })
 
     return () => { cancelled = true }
   }, [weather, lang])
 
-  const displayRecs = translatedRecs.length > 0 ? translatedRecs : (weather?.recommendations || [])
+  const displayRecs = translation?.lang === lang && translation.weather === weather
+    ? translation.items
+    : (weather?.recommendations || [])
   const hasHighPriority = displayRecs.some((r) => r.priority === "high")
 
   return (

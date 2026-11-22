@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react"
-import { FiBookmark, FiChevronDown, FiSliders } from "react-icons/fi"
+import { FiBookmark, FiChevronDown, FiInbox, FiSliders } from "react-icons/fi"
 import SchemeCard from "./SchemeCard"
 import { getAllSchemes } from "../services/schemeService"
 import { useAuth } from "../context/AuthContext"
@@ -17,6 +17,7 @@ export default function SchemePage({ search = "", category }) {
   const [cropFilter, setCropFilter] = useState([])
   const [eligibilityFilter, setEligibilityFilter] = useState("all")
   const [showBookmarks, setShowBookmarks] = useState(false)
+  const [filtersOpen, setFiltersOpen] = useState(false)
 
   const [sortOrder, setSortOrder] = useState("")
   const [pagination, setPagination] = useState(null)
@@ -29,6 +30,7 @@ export default function SchemePage({ search = "", category }) {
   const { user } = useAuth()
   const { bookmarks } = useBookmarks()
   const farmerProfile = user?.profile
+  const savedOnly = Boolean(user && showBookmarks)
 
   useEffect(() => {
     let cancelled = false
@@ -72,11 +74,11 @@ export default function SchemePage({ search = "", category }) {
 
       return (
         matchesSearch &&
-        (!showBookmarks || bookmarks.includes(s?.scheme_id)) &&
+        (!savedOnly || bookmarks.includes(s?.scheme_id)) &&
         (stateFilter.length === 0 || stateFilter.includes(s?.state)) &&
         (categoryFilter.length === 0 || categoryFilter.includes(s?.category)) &&
         (cropFilter.length === 0 || schemeCrops.length === 0 || cropFilter.some((c) => schemeCrops.includes(c))) &&
-        (eligibilityFilter === "all" ||
+        (!farmerProfile || eligibilityFilter === "all" ||
           (eligibilityFilter === "eligible" && eligible) ||
           (eligibilityFilter === "notEligible" && !eligible))
       )
@@ -86,7 +88,7 @@ export default function SchemePage({ search = "", category }) {
     if (sortOrder === "desc") result.sort((a, b) => (b?.scheme_name || "").localeCompare(a?.scheme_name || ""))
 
     return result
-  }, [schemes, search, stateFilter, categoryFilter, cropFilter, eligibilityFilter, sortOrder, farmerProfile, showBookmarks, bookmarks])
+  }, [schemes, search, stateFilter, categoryFilter, cropFilter, eligibilityFilter, sortOrder, farmerProfile, savedOnly, bookmarks])
 
   /* ================= PAGINATION ================= */
   const totalPages = Math.ceil(filtered.length / schemesPerPage)
@@ -109,7 +111,18 @@ export default function SchemePage({ search = "", category }) {
 
   return (
     <div className="kc-shell kc-directory">
-      <aside className="kc-filters" aria-labelledby="filters-heading">
+      <button
+        className="kc-button kc-button-outline kc-filter-toggle"
+        type="button"
+        aria-controls="scheme-filters"
+        aria-expanded={filtersOpen}
+        onClick={() => setFiltersOpen(!filtersOpen)}
+      >
+        <FiSliders aria-hidden="true" /> {t("schemes.filters")}
+        {activeFilterCount > 0 && <span className="kc-filter-count">{activeFilterCount}</span>}
+        <FiChevronDown aria-hidden="true" />
+      </button>
+      <aside id="scheme-filters" className="kc-filters" data-open={filtersOpen} aria-labelledby="filters-heading">
         <div className="kc-filter-heading">
           <h2 id="filters-heading"><FiSliders aria-hidden="true" /> {t("schemes.filters")}</h2>
           <p>{t("schemes.filtersDesc")}</p>
@@ -220,13 +233,13 @@ export default function SchemePage({ search = "", category }) {
           <div className="kc-results-actions">
             {user && (
               <button
-                className="kc-button kc-button-outline"
+                className="kc-button kc-button-outline kc-bookmark-filter"
                 onClick={() => setShowBookmarks((value) => !value)}
                 aria-label={t("schemes.bookmarks")}
-                aria-pressed={showBookmarks}
+                aria-pressed={savedOnly}
               >
-                <FiBookmark aria-hidden="true" fill={showBookmarks ? "currentColor" : "none"} />
-                {bookmarks.length > 0 && bookmarks.length}
+                <FiBookmark aria-hidden="true" fill={savedOnly ? "currentColor" : "none"} />
+                {t("schemes.bookmarks")} {bookmarks.length > 0 && bookmarks.length}
               </button>
             )}
             <select
@@ -268,8 +281,9 @@ export default function SchemePage({ search = "", category }) {
 
               {filtered.length === 0 && (
                 <div className="kc-empty">
-                  <p className="text-slate-600 font-medium">{t('schemes.noResults')}</p>
-                  <p className="text-sm text-slate-600">{t('schemes.noResultsHint')}</p>
+                  <FiInbox aria-hidden="true" />
+                  <strong>{t(savedOnly && bookmarks.length === 0 ? "schemes.noSaved" : "schemes.noResults")}</strong>
+                  {!savedOnly && <p>{t("schemes.noResultsHint")}</p>}
                 </div>
               )}
             </div>

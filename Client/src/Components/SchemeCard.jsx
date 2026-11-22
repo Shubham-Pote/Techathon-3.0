@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext"
 import { useBookmarks } from "../context/BookmarkContext"
 import { isEligible } from "../utils/eligibility"
 import { translateText, translateArray } from "../utils/translate"
-import { FiArrowUpRight, FiBookmark, FiHeart, FiMapPin, FiShield } from "react-icons/fi"
+import { FiArrowRight, FiArrowUpRight, FiBookmark, FiHeart, FiMapPin, FiShield } from "react-icons/fi"
 import { LuSprout } from "react-icons/lu"
 
 const categoryIcons = { SUBSIDY: LuSprout, INSURANCE: FiShield, WELFARE: FiHeart }
@@ -53,14 +53,14 @@ export default function SchemeCard({ scheme }) {
   const { name, desc, financial, state, crops } = translated?.lang === lang
     ? translated
     : { name: rawName, desc: rawDesc, financial: rawFinancialSummary, state: rawState, crops: rawCrops }
-  const detailsPath = scheme?.scheme_id && `/schemes/${scheme.scheme_id}`
+  const detailsPath = scheme?.scheme_id && `/schemes/${encodeURIComponent(scheme.scheme_id)}`
   const portal = scheme?.application_process?.portal_url
 
   return (
-    <article className="kc-card">
+    <article className="kc-card" data-category={scheme.category}>
       <div className="kc-card-top">
         <span className="kc-topic-icon"><CategoryIcon aria-hidden="true" /></span>
-        {scheme?.category && <span className="kc-chip">{scheme.category}</span>}
+        {scheme.category && <span className="kc-category">{t("categories." + scheme.category, { defaultValue: scheme.category })}</span>}
         {user && (
           <button
             className="kc-bookmark"
@@ -73,7 +73,8 @@ export default function SchemeCard({ scheme }) {
           </button>
         )}
       </div>
-      <div className="kc-card-main">
+      <div className="kc-card-body">
+       <div className="kc-card-main">
         <h3>{detailsPath ? <Link to={detailsPath}>{name || "Unnamed Scheme"}</Link> : name}</h3>
         <div className="kc-card-meta">
           <span><FiMapPin aria-hidden="true" /> {state || t("card.allIndia")}</span>
@@ -81,7 +82,6 @@ export default function SchemeCard({ scheme }) {
           {farmerProfile && <span className="kc-chip">{eligible ? t("card.eligible") : t("card.notEligible")}</span>}
         </div>
         <p className="kc-card-description">{desc || t("card.noDescription")}</p>
-        {financial && <div className="kc-card-benefit"><strong>{t("card.financialAssistance")}</strong><p>{financial}</p></div>}
         {(crops.length > 0 || Boolean(scheme?.min_land_acres)) && (
           <div className="kc-card-crops">
             {crops.slice(0, 3).map((crop, index) => <span className="kc-chip" key={index}>{crop}</span>)}
@@ -89,9 +89,11 @@ export default function SchemeCard({ scheme }) {
             {scheme?.min_land_acres ? <span>{t("card.minAcre", { n: scheme.min_land_acres })}</span> : null}
           </div>
         )}
+       </div>
+       {financial && <div className="kc-card-benefit"><strong>{t("card.financialAssistance")}</strong><p>{financial}</p></div>}
       </div>
       <div className="kc-card-actions">
-        {detailsPath && <Link className="kc-text-link" to={detailsPath}>{t("card.viewDetails")}</Link>}
+        {detailsPath && <Link className="kc-text-link" to={detailsPath}>{t("card.viewDetails")} <FiArrowRight aria-hidden="true" /></Link>}
         {portal && <a className="kc-text-link" href={portal} target="_blank" rel="noopener noreferrer">{t("card.applyNow")} <FiArrowUpRight aria-hidden="true" /></a>}
       </div>
     </article>

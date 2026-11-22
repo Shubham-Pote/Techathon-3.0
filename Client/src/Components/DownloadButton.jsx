@@ -1,7 +1,13 @@
-import jsPDF from "jspdf";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { FiDownload } from "react-icons/fi";
 
 export default function DownloadButton({ scheme, details, benefits, proc }) {
-  const handleDownload = () => {
+  const { t } = useTranslation();
+  const [downloadStatus, setDownloadStatus] = useState("idle");
+
+  const savePdf = async () => {
+    const { jsPDF } = await import("jspdf");
     const doc = new jsPDF();
     const pageWidth  = doc.internal.pageSize.width;   // 210 mm
     const pageHeight = doc.internal.pageSize.height;  // 297 mm
@@ -239,20 +245,23 @@ export default function DownloadButton({ scheme, details, benefits, proc }) {
     doc.save(`${schemeName.replace(/\s+/g, "_")}_Details.pdf`);
   };
 
+  async function handleDownload() {
+    setDownloadStatus("loading");
+    try {
+      await savePdf();
+      setDownloadStatus("idle");
+    } catch {
+      setDownloadStatus("error");
+    }
+  }
+
   return (
-    <button
-      onClick={handleDownload}
-      className="kc-button kc-button-outline"
-    >
-      {/* Download arrow icon */}
-      <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0">
-        <path
-          fillRule="evenodd"
-          d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
-          clipRule="evenodd"
-        />
-      </svg>
-      Download Details
-    </button>
+    <div className="kc-download">
+      <button type="button" onClick={handleDownload} disabled={downloadStatus === "loading"} className="kc-button kc-button-outline">
+        <FiDownload aria-hidden="true" />
+        {t(downloadStatus === "loading" ? "schemeDetail.preparingDownload" : "schemeDetail.download")}
+      </button>
+      {downloadStatus === "error" && <p role="alert">{t("schemeDetail.downloadError")}</p>}
+    </div>
   );
 }

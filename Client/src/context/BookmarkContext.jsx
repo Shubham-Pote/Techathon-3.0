@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from "react"
+import { createContext, useContext, useState } from "react"
 import { useAuth } from "./AuthContext"
 
 const BookmarkContext = createContext()
@@ -10,7 +10,7 @@ function getStoredBookmarks(userId) {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const all = JSON.parse(raw)
-    return all[userId] || []
+    return Array.isArray(all?.[userId]) ? all[userId] : []
   } catch {
     return []
   }
@@ -31,35 +31,20 @@ export function BookmarkProvider({ children }) {
   const { user } = useAuth()
   const userId = user?.mobile || null
 
-  const [bookmarks, setBookmarks] = useState([])
+  const [updated, setUpdated] = useState(null)
+  const cached = updated?.userId === userId ? updated.bookmarks : null
+  const bookmarks = userId ? cached ?? getStoredBookmarks(userId) : emptyBookmarks
 
-  // Load bookmarks when user changes
-  useEffect(() => {
-    if (userId) {
-      setBookmarks(getStoredBookmarks(userId))
-    } else {
-      setBookmarks([])
-    }
-  }, [userId])
+  function toggleBookmark(schemeId) {
+    if (!userId || !schemeId) return
+    const next = bookmarks.includes(schemeId)
+      ? bookmarks.filter((id) => id !== schemeId)
+      : [...bookmarks, schemeId]
+    saveBookmarks(userId, next)
+    setUpdated({ userId, bookmarks: next })
+  }
 
-  const toggleBookmark = useCallback(
-    (schemeId) => {
-      if (!userId) return
-      setBookmarks((prev) => {
-        const next = prev.includes(schemeId)
-          ? prev.filter((id) => id !== schemeId)
-          : [...prev, schemeId]
-        saveBookmarks(userId, next)
-        return next
-      })
-    },
-    [userId]
-  )
-
-  const isBookmarked = useCallback(
-    (schemeId) => bookmarks.includes(schemeId),
-    [bookmarks]
-  )
+  const isBookmarked = (schemeId) => bookmarks.includes(schemeId)
 
   return (
     <BookmarkContext.Provider value={{ bookmarks, toggleBookmark, isBookmarked }}>
@@ -68,4 +53,6 @@ export function BookmarkProvider({ children }) {
   )
 }
 
+const emptyBookmarks = []
+// eslint-disable-next-line react-refresh/only-export-components
 export const useBookmarks = () => useContext(BookmarkContext)

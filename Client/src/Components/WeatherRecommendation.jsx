@@ -9,7 +9,7 @@ export default function WeatherRecommendation() {
 
   const [weather, setWeather] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [translatedRecs, setTranslatedRecs] = useState([])
+  const [translation, setTranslation] = useState(null)
 
   useEffect(() => {
     async function fetchWeather() {
@@ -22,15 +22,7 @@ export default function WeatherRecommendation() {
   }, [])
 
   useEffect(() => {
-    if (!weather?.recommendations?.length) {
-      setTranslatedRecs([])
-      return
-    }
-
-    if (lang === "en") {
-      setTranslatedRecs(weather.recommendations)
-      return
-    }
+    if (lang === "en" || !weather?.recommendations?.length) return
 
     let cancelled = false
     Promise.all(
@@ -39,7 +31,7 @@ export default function WeatherRecommendation() {
         message: await translateText(rec.message, lang),
       }))
     ).then((translated) => {
-      if (!cancelled) setTranslatedRecs(translated)
+      if (!cancelled) setTranslation({ lang, weather, items: translated })
     })
 
     return () => { cancelled = true }
@@ -59,7 +51,7 @@ export default function WeatherRecommendation() {
   if (!weather) return null
 
   const { currentWeather, recommendations } = weather
-  const displayRecs = translatedRecs.length > 0 ? translatedRecs : recommendations
+  const displayRecs = translation?.lang === lang && translation.weather === weather ? translation.items : recommendations
 
   return (
     <div className="bg-gradient-to-r from-blue-50 via-cyan-50 to-emerald-50 rounded-2xl p-4 sm:p-5 border border-blue-100 shadow-sm">

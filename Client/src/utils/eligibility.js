@@ -15,8 +15,8 @@ export function isEligible(scheme, farmer) {
 
   // crop match
   if (
-    scheme.supported_crops.length &&
-    farmer.crops.length &&
+    scheme.supported_crops?.length &&
+    farmer.crops?.length &&
     !scheme.supported_crops.some((c) =>
       farmer.crops.includes(c)
     )

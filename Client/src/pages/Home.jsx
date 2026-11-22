@@ -1,4 +1,3 @@
-import Navbar from "../Components/Navbar"
 import HeroHeader from "../Components/HeroHeader"
 import SchemePage from "../Components/SchemePage"
 import { useState } from "react"
@@ -9,12 +8,7 @@ export default function Home() {
   const query = params.get("q") || ""
   const category = params.get("category")
 
-  return (
-    <>
-      <Navbar />
-      <Directory key={params.toString()} initialSearch={query} category={category} />
-    </>
-  )
+  return <Directory key={params.toString()} initialSearch={query} category={category} />
 }
 
 function Directory({ initialSearch, category }) {

@@ -13,17 +13,19 @@ export default function SchemeSearch({ value, onChange, onSearch }) {
 
   return (
     <form className="kc-search" role="search" onSubmit={submit}>
-      <FiSearch aria-hidden="true" />
-      <label htmlFor={searchId} className="sr-only">{t("landing.exploreSchemes")}</label>
-      <input
-        type="search"
-        name="q"
-        id={searchId}
-        placeholder={t("hero.searchPlaceholder")}
-        value={value}
-        onChange={onChange && ((event) => onChange(event.target.value))}
-      />
-      <button className="kc-button" type="submit">{t("hero.searchBtn")}</button>
+      <label htmlFor={searchId}>{t("hero.searchLabel")}</label>
+      <div className="kc-search-field">
+        <FiSearch aria-hidden="true" />
+        <input
+          type="search"
+          name="q"
+          id={searchId}
+          placeholder={t("hero.searchPlaceholder")}
+          value={value}
+          onChange={onChange && ((event) => onChange(event.target.value))}
+        />
+        <button className="kc-button" type="submit">{t("hero.searchBtn")}</button>
+      </div>
     </form>
   )
 }

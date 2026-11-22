@@ -15,8 +15,8 @@ export default defineConfig({
         name: 'Krishiculture - Empowering Farmers',
         short_name: 'Krishiculture',
         description: 'Find government agricultural schemes, subsidies, and insurance programs for farmers across India.',
-        theme_color: '#059669',
-        background_color: '#f8fafc',
+        theme_color: '#f8f6ed',
+        background_color: '#f8f6ed',
         display: 'standalone',
         orientation: 'portrait',
         scope: '/',
@@ -37,7 +37,8 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,webp,woff2}'],
+        globIgnores: ['android-chrome-*.png', 'farmer-bg.png', 'leaf.png', 'wheat.png', 'ashok.png', 'vite.svg'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,

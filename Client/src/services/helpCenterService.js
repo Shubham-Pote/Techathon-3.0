@@ -12,7 +12,7 @@ const DEFAULT_LON = 77.2090
 function getCurrentLocation() {
   return new Promise((resolve) => {
     if (!navigator.geolocation) {
-      resolve({ lat: DEFAULT_LAT, lon: DEFAULT_LON })
+      resolve({ lat: DEFAULT_LAT, lon: DEFAULT_LON, fallbackLocation: true })
       return
     }
 
@@ -24,7 +24,7 @@ function getCurrentLocation() {
         })
       },
       () => {
-        resolve({ lat: DEFAULT_LAT, lon: DEFAULT_LON })
+        resolve({ lat: DEFAULT_LAT, lon: DEFAULT_LON, fallbackLocation: true })
       },
       { timeout: 5000 }
     )
@@ -71,7 +71,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
  */
 export async function getNearbyHelpCenters() {
   try {
-    const { lat, lon } = await getCurrentLocation()
+    const { lat, lon, fallbackLocation } = await getCurrentLocation()
     const radius = 10000 // 10km radius
 
     // Overpass QL query for multiple types of places
@@ -97,7 +97,7 @@ export async function getNearbyHelpCenters() {
     `
 
     const data = await queryOverpass(query)
-    if (!data?.elements) return { agricultureOffices: [], banks: [], serviceCenters: [], userLocation: { lat, lon } }
+    if (!data?.elements) return { failed: true }
 
     const agricultureOffices = []
     const banks = []
@@ -155,17 +155,18 @@ export async function getNearbyHelpCenters() {
       banks: banks.sort(sortByDistance).slice(0, 5),
       serviceCenters: serviceCenters.sort(sortByDistance).slice(0, 5),
       userLocation: { lat, lon },
+      fallbackLocation,
     }
   } catch (error) {
     console.error("Help center service error:", error)
-    return { agricultureOffices: [], banks: [], serviceCenters: [], userLocation: null }
+    return { failed: true }
   }
 }
 
 /**
  * Open location in Google Maps
  */
-export function openInMaps(lat, lon, name) {
+export function openInMaps(lat, lon) {
   const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`
   window.open(url, "_blank")
 }

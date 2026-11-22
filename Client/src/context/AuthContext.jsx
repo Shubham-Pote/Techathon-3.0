@@ -1,15 +1,15 @@
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState } from "react"
 
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
-
-  // ✅ keep login persistent after refresh
-  useEffect(() => {
-    const saved = localStorage.getItem("farmer_user")
-    if (saved) setUser(JSON.parse(saved))
-  }, [])
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("farmer_user"))
+    } catch {
+      return null
+    }
+  })
 
   // ✅ store FULL user + profile
   const login = (userData) => {
@@ -20,6 +20,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     setUser(null)
     localStorage.removeItem("farmer_user")
+    localStorage.removeItem("token")
   }
 
   return (
@@ -29,4 +30,5 @@ export function AuthProvider({ children }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext)

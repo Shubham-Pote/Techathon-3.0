@@ -1,14 +1,16 @@
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import api from "../../utils/api"
 
 export default function PhoneStep({ phone, setPhone, next }) {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
   const handleSendOtp = async (event) => {
     event.preventDefault()
-    if (!phone || phone.length !== 10) {
-      setError("Enter valid 10 digit mobile number")
+    if (!/^\d{10}$/.test(phone)) {
+      setError(t("auth.invalidPhone"))
       return
     }
 
@@ -24,38 +26,31 @@ export default function PhoneStep({ phone, setPhone, next }) {
 
       next(res.data.otp || null)
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to send OTP")
+      setError(err.response?.data?.message || t("auth.sendFailed"))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSendOtp} className="space-y-6">
-      <label className="block mb-2 text-gray-700 text-sm" htmlFor="sign-in-phone">
-        Enter mobile number to continue
-      </label>
-
-      <input
-        type="tel"
-        id="sign-in-phone"
-        autoComplete="tel-national"
-        inputMode="numeric"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        placeholder="9876543210"
-        className="w-full bg-white border border-gray-200 rounded-2xl px-5 py-4 shadow-sm focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 outline-none transition-all"
-      />
-
-      {error && <p className="text-red-700 text-sm" role="alert">{error}</p>}
-
-      <button
-        type="submit"
-        disabled={loading}
-        className="kc-button w-full"
-      >
-        {loading ? "Sending..." : "Send OTP"}
-      </button>
+    <form onSubmit={handleSendOtp} className="kc-auth-fields">
+      <label htmlFor="sign-in-phone">{t("auth.mobileNumber")}</label>
+      <div className="kc-phone">
+        <span aria-hidden="true">+91</span>
+        <input
+          type="tel"
+          id="sign-in-phone"
+          autoComplete="tel-national"
+          inputMode="numeric"
+          aria-describedby={error ? "phone-error" : undefined}
+          aria-invalid={Boolean(error)}
+          value={phone}
+          dir="ltr"
+          onChange={(event) => setPhone(event.target.value)}
+        />
+      </div>
+      {error && <p className="text-red-700 text-sm" id="phone-error" role="alert">{error}</p>}
+      <button type="submit" disabled={loading} className="kc-button">{t(loading ? "auth.sendingOtp" : "auth.sendOtp")}</button>
     </form>
   )
 }

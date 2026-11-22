@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import api from "../../utils/api"
 
 const cropsEnum = [
@@ -21,6 +22,7 @@ const indianStates = [
 ]
 
 export default function DetailsStep({ onFinish }) {
+  const { t } = useTranslation()
   const [form, setForm] = useState({
     state: "",
     landSizeAcres: "",
@@ -64,34 +66,31 @@ export default function DetailsStep({ onFinish }) {
       // Pass back the saved farmer record from the server
       onFinish(res.data.farmer ?? payload)
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to save profile. Please try again.")
+      setError(err.response?.data?.message || t("auth.profileError"))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="kc-auth-fields">
 
       <div>
-        <p className="text-gray-700 text-sm font-medium mb-4">
-          Complete your farm details to find eligible schemes
-        </p>
+        <p>{t("auth.farmDetails")}</p>
       </div>
 
       {/* State */}
       <div>
         <label htmlFor="farm-state" className="block text-sm font-semibold text-gray-700 mb-2">
-          State <span className="text-red-500">*</span>
+          {t("schemes.state")}
         </label>
         <select
           id="farm-state"
           name="state"
           value={form.state}
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
         >
-          <option value="">Select your state</option>
+          <option value="">{t("auth.selectState")}</option>
           {indianStates.map((state) => (
             <option key={state} value={state}>
               {state}
@@ -103,7 +102,7 @@ export default function DetailsStep({ onFinish }) {
       {/* Land Size */}
       <div>
         <label htmlFor="farm-land" className="block text-sm font-semibold text-gray-700 mb-2">
-          Land Size (in acres)
+          {t("auth.landSize")}
         </label>
         <input
           type="number"
@@ -114,34 +113,26 @@ export default function DetailsStep({ onFinish }) {
           step="0.1"
           min="0"
           onChange={handleChange}
-          className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
         />
       </div>
 
       {/* Crops multi-select */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          Crops You Grow
-        </label>
-        <div className="grid grid-cols-2 gap-2">
+      <fieldset>
+        <legend className="block text-sm font-semibold text-gray-700 mb-2">{t("auth.crops")}</legend>
+        <div className="kc-crop-options">
           {cropsEnum.map((crop) => (
             <button
               key={crop}
               aria-pressed={form.crops.includes(crop)}
               type="button"
               onClick={() => toggleCrop(crop)}
-              className={`px-3 py-2 rounded-md border text-xs font-medium transition-all
-                ${
-                  form.crops.includes(crop)
-                    ? "bg-emerald-600 border-emerald-600 text-white"
-                    : "bg-white border-gray-300 text-gray-700 hover:border-emerald-400"
-                }`}
+              className="kc-button kc-button-outline"
             >
               {crop}
             </button>
           ))}
         </div>
-      </div>
+      </fieldset>
 
       {error && <p className="text-red-700 text-sm" role="alert">{error}</p>}
 
@@ -151,7 +142,7 @@ export default function DetailsStep({ onFinish }) {
         disabled={loading}
         className="kc-button w-full"
       >
-        {loading ? "Saving..." : "Save & Continue"}
+        {t(loading ? "auth.saving" : "auth.saveProfile")}
       </button>
     </form>
   )

@@ -1,6 +1,9 @@
 {
   "nav": {
     "primary": "Main navigation",
+    "language": "Language: {{language}}",
+    "help": "Nearby help",
+    "close": "Close",
     "skipToMain": "Skip to main content",
     "login": "Login",
     "logout": "Logout",
@@ -11,10 +14,11 @@
     "checkEligibility": "Check Eligibility"
   },
   "hero": {
-    "title1": "Find the right scheme",
+    "title1": "Find support",
     "title2": "for your farm.",
     "subtitle": "Search across government agricultural schemes, subsidies, and insurance programs",
-    "searchPlaceholder": "Search by name or topic",
+    "searchLabel": "Search schemes",
+    "searchPlaceholder": "By name or topic",
     "searchBtn": "Search"
   },
   "schemes": {
@@ -40,6 +44,7 @@
     "sortZA": "Sort: Z \u2192 A",
     "loading": "Loading schemes...",
     "noResults": "No schemes found",
+    "noSaved": "You haven’t saved any schemes yet.",
     "noResultsHint": "Try adjusting your filters or search",
     "prev": "\u2190 Previous",
     "next": "Next \u2192"
@@ -59,6 +64,9 @@
   },
   "schemeDetail": {
     "loadError": "We couldn't load this scheme.",
+    "download": "Download PDF",
+    "preparingDownload": "Preparing PDF…",
+    "downloadError": "Couldn’t download the PDF. Try again.",
     "loading": "Loading...",
     "schemeSection": "Scheme Section",
     "back": "\u2190 Back to Schemes",
@@ -97,9 +105,15 @@
     "supportTypes": "Browse by type of support",
     "subsidies": "Subsidies",
     "farmerWelfare": "Farmer welfare",
+    "subsidyDescription": "Find help with farm inputs, equipment, and improvements.",
+    "insuranceDescription": "Explore protection for your crops and livelihood.",
+    "welfareDescription": "Look up income support and other benefits for farmers.",
+    "findStep": "Find a scheme",
+    "applyStep": "Prepare and apply",
+    "eligibilityDescription": "Use your state, crops, and land size to check which schemes match your farm.",
     "applicationGuide": "Review the documents and steps before applying on the scheme's portal.",
     "heroTitle": "Krishiculture",
-    "heroSubtitle": "Explore government subsidies, crop insurance and financial support for your farm. Check eligibility and find out how to apply.",
+    "heroSubtitle": "Find government subsidies, crop insurance and other benefits. Check eligibility and see how to apply.",
     "checkYourEligibility": "Check Your Eligibility",
     "exploreSchemes": "Explore Schemes",
     "heroNote": "No complex forms. No confusion. Just the right support.",
@@ -161,6 +175,11 @@
       { "num": "04", "icon": "checklist", "title": "End-to-End Guidance",            "desc": "From discovering a scheme to submitting an application — we walk farmers through every document, step, and deadline." }
     ]
   },
+  "categories": {
+    "SUBSIDY": "Subsidy",
+    "INSURANCE": "Insurance",
+    "WELFARE": "Welfare"
+  },
   "auth": {
     "loginTitle": "Farmer Login",
     "loginSubtitle": "Sign in with your mobile number to check eligibility and save schemes.",
@@ -170,11 +189,36 @@
     "stepPhone": "Phone",
     "stepOtp": "OTP",
     "stepDetails": "Details",
+    "mobileNumber": "Mobile number",
+    "invalidPhone": "Enter a valid 10-digit mobile number.",
+    "sendFailed": "Couldn’t send the code. Try again.",
+    "sendingOtp": "Sending code…",
+    "sendOtp": "Send code",
+    "demoOtp": "Demo code",
+    "otpLabel": "Six-digit verification code",
+    "invalidOtp": "Enter a valid six-digit code.",
+    "verifying": "Verifying…",
+    "verifyOtp": "Verify code",
+    "farmDetails": "Add your farm details to find matching schemes.",
+    "selectState": "Select your state",
+    "landSize": "Land size (acres)",
+    "crops": "Crops you grow",
+    "profileError": "Couldn’t save your farm details. Try again.",
+    "saving": "Saving…",
+    "saveProfile": "Save and continue",
     "footer": "Secure • Government Verified • No data shared"
   },
   "chatbot": {
+    "name": "Krishi Mitra",
+    "open": "Open Krishi Mitra",
+    "close": "Close Krishi Mitra",
+    "reset": "New chat",
+    "voice": "Voice input",
+    "voiceError": "Voice input couldn’t start. You can type your question instead.",
+    "send": "Send question",
+    "note": "Check important information against the official scheme details.",
     "title": "Krishi Mitra 🌾",
-    "greeting": "👋 Hello Farmer! Ask me about schemes, insurance, or farming tips.",
+    "greeting": "Ask me about schemes, insurance, or farming tips.",
     "placeholder": "Ask your question...",
     "sending": "Thinking...",
     "error": "Sorry, something went wrong. Please try again.",
